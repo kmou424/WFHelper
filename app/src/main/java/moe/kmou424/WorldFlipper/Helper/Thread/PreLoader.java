@@ -1,10 +1,10 @@
-package com.kmou424.WorldFlipper.Helper.Thread;
+package moe.kmou424.WorldFlipper.Helper.Thread;
 
 import android.content.Context;
 import android.os.Handler;
 
-import com.kmou424.WorldFlipper.Helper.Tools.FileUtils;
-import com.kmou424.WorldFlipper.Helper.Tools.TesseractOCR;
+import moe.kmou424.WorldFlipper.Helper.Tools.FileUtils;
+import moe.kmou424.WorldFlipper.Helper.Tools.TesseractOCR;
 
 public class PreLoader {
     private final String LOG_TAG = "PreLoader";

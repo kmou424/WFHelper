@@ -7,7 +7,7 @@ android {
     buildToolsVersion '32.0.0'
 
     defaultConfig {
-        applicationId "com.kmou424.WorldFlipper.Helper"
+        applicationId "moe.kmou424.WorldFlipper.Helper"
         minSdk 21
         targetSdk 25
         versionCode 1

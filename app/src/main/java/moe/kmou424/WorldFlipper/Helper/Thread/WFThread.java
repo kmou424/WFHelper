@@ -1,10 +1,10 @@
-package com.kmou424.WorldFlipper.Helper.Thread;
+package moe.kmou424.WorldFlipper.Helper.Thread;
 
 import android.os.Handler;
 
-import com.kmou424.WorldFlipper.Helper.Handler.ProgressDialogHandlerMsg;
-import com.kmou424.WorldFlipper.Helper.Handler.HandlerMsg;
-import com.kmou424.WorldFlipper.Helper.Logger.Logger;
+import moe.kmou424.WorldFlipper.Helper.Handler.ProgressDialogHandlerMsg;
+import moe.kmou424.WorldFlipper.Helper.Handler.HandlerMsg;
+import moe.kmou424.WorldFlipper.Helper.Logger.Logger;
 
 public class WFThread<T> extends Thread {
     private final static String LOG_TAG = "WFThread";

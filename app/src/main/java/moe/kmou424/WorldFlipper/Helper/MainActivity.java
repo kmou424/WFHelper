@@ -1,6 +1,6 @@
-package com.kmou424.WorldFlipper.Helper;
+package moe.kmou424.WorldFlipper.Helper;
 
-import static com.kmou424.WorldFlipper.Helper.Handler.HandlerMsg.*;
+import static moe.kmou424.WorldFlipper.Helper.Handler.HandlerMsg.*;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,13 +16,16 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 
-import com.kmou424.WorldFlipper.Helper.Handler.HandlerMsg;
-import com.kmou424.WorldFlipper.Helper.Handler.ProgressDialogHandlerMsg;
-import com.kmou424.WorldFlipper.Helper.Logger.Logger;
-import com.kmou424.WorldFlipper.Helper.Thread.WFThread;
-import com.kmou424.WorldFlipper.Helper.Thread.PreLoader;
-import com.kmou424.WorldFlipper.Helper.Tools.FileUtils;
-import com.kmou424.WorldFlipper.Helper.Tools.TesseractOCR;
+import moe.kmou424.WorldFlipper.Helper.R;
+
+import moe.kmou424.WorldFlipper.Helper.Handler.HandlerMsg;
+import moe.kmou424.WorldFlipper.Helper.Handler.ProgressDialogHandlerMsg;
+import moe.kmou424.WorldFlipper.Helper.Logger.Logger;
+
+import moe.kmou424.WorldFlipper.Helper.Thread.WFThread;
+import moe.kmou424.WorldFlipper.Helper.Thread.PreLoader;
+import moe.kmou424.WorldFlipper.Helper.Tools.FileUtils;
+import moe.kmou424.WorldFlipper.Helper.Tools.TesseractOCR;
 
 public class MainActivity extends AppCompatActivity {
 

@@ -1,8 +1,8 @@
-package com.kmou424.WorldFlipper.Helper.Logger;
+package moe.kmou424.WorldFlipper.Helper.Logger;
 
 import android.annotation.SuppressLint;
 
-import com.kmou424.WorldFlipper.Helper.Tools.FileUtils;
+import moe.kmou424.WorldFlipper.Helper.Tools.FileUtils;
 
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.kmou424.WorldFlipper.Helper">
+    package="moe.kmou424.WorldFlipper.Helper">
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
@@ -14,7 +14,7 @@
         android:theme="@style/Theme.WFHelper"
         android:fullBackupContent="true">
         <activity
-            android:name=".MainActivity"
+            android:name="moe.kmou424.WorldFlipper.Helper.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

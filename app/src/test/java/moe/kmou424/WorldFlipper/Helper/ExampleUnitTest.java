@@ -1,4 +1,4 @@
-package com.kmou424.WorldFlipper.Helper;
+package moe.kmou424.WorldFlipper.Helper;
 
 import org.junit.Test;
 

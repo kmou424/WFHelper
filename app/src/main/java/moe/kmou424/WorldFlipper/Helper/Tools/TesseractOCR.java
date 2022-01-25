@@ -1,7 +1,7 @@
-package com.kmou424.WorldFlipper.Helper.Tools;
+package moe.kmou424.WorldFlipper.Helper.Tools;
 
 import com.googlecode.tesseract.android.TessBaseAPI;
-import com.kmou424.WorldFlipper.Helper.Logger.Logger;
+import moe.kmou424.WorldFlipper.Helper.Logger.Logger;
 
 public class TesseractOCR {
     private final static String LOG_TAG = "TesseractOCR";
