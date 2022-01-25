@@ -1,4 +1,4 @@
-package moe.kmou424.WorldFlipper.Helper.Handler;
+package moe.kmou424.WorldFlipper.Helper.HandlerMsg;
 
 import android.app.ProgressDialog;
 

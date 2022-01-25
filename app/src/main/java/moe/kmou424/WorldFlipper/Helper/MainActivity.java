@@ -1,6 +1,6 @@
 package moe.kmou424.WorldFlipper.Helper;
 
-import static moe.kmou424.WorldFlipper.Helper.Handler.HandlerMsg.*;
+import static moe.kmou424.WorldFlipper.Helper.HandlerMsg.HandlerMsg.*;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -9,35 +9,78 @@ import androidx.core.content.ContextCompat;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.ProgressDialog;
-import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.provider.Settings;
+import android.view.View;
+import android.widget.Toast;
 
-import moe.kmou424.WorldFlipper.Helper.R;
-
-import moe.kmou424.WorldFlipper.Helper.Handler.HandlerMsg;
-import moe.kmou424.WorldFlipper.Helper.Handler.ProgressDialogHandlerMsg;
+import moe.kmou424.WorldFlipper.Helper.HandlerMsg.FloatingWindowHandlerMsg;
+import moe.kmou424.WorldFlipper.Helper.HandlerMsg.ProgressDialogHandlerMsg;
+import moe.kmou424.WorldFlipper.Helper.HandlerMsg.TesseractOCRHandlerMsg;
+import moe.kmou424.WorldFlipper.Helper.Listener.FloatingOnTouchListener;
 import moe.kmou424.WorldFlipper.Helper.Logger.Logger;
 
-import moe.kmou424.WorldFlipper.Helper.Thread.WFThread;
-import moe.kmou424.WorldFlipper.Helper.Thread.PreLoader;
-import moe.kmou424.WorldFlipper.Helper.Tools.FileUtils;
 import moe.kmou424.WorldFlipper.Helper.Tools.TesseractOCR;
+import moe.kmou424.WorldFlipper.Helper.Widget.ProgressDialog;
 
 public class MainActivity extends AppCompatActivity {
 
     //private TextView mMainLog;
     private Handler mHandler;
+    private Toast mToast;
 
-    private ProgressDialog mProgressDialog;
+    // Custom Widget
+    private moe.kmou424.WorldFlipper.Helper.Widget.ProgressDialog mProgressDialog;
 
     protected TesseractOCR mTesseractOCR;
 
-    void init() {
+
+    void initHandler() {
+        mHandler = new Handler(getMainLooper()) {
+            @SuppressLint("ClickableViewAccessibility")
+            @Override
+            public void handleMessage(@NonNull Message msg) {
+                switch (Math.abs(msg.what)) {
+                    case MOVE_TASK_TO_BACK:
+                        moveTaskToBack(true);
+                        break;
+                    case PUSH_TESS_OCR:
+                        TesseractOCRHandlerMsg tesseractOCRHandlerMsg = (TesseractOCRHandlerMsg) msg.obj;
+                        mTesseractOCR = tesseractOCRHandlerMsg.mTesseractOCR;
+                        break;
+                    case SHOW_PROGRESS_DIALOG:
+                        if (msg.what == HIDE_PROGRESS_DIALOG) mProgressDialog.hide();
+                        if (msg.what == SHOW_PROGRESS_DIALOG) {
+                            mProgressDialog.setAttribute((ProgressDialogHandlerMsg) msg.obj);
+                            mProgressDialog.show();
+                        }
+                        break;
+                    case SHOW_FLOATING_WINDOW:
+                        FloatingWindowHandlerMsg fwh_msg = (FloatingWindowHandlerMsg) msg.obj;
+                        fwh_msg.mWindowManager.addView(fwh_msg.mView, fwh_msg.mLayoutParams);
+                        fwh_msg.mView.setOnTouchListener(new FloatingOnTouchListener(fwh_msg));
+                        fwh_msg.mView.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+
+                            }
+                        });
+                        break;
+                }
+            }
+        };
+    }
+
+    void initObjects() {
         //mMainLog = findViewById(R.id.main_log);
+        mToast = Toast.makeText(MainActivity.this, null, Toast.LENGTH_LONG);
+
+        // Custom Widget
         mProgressDialog = new ProgressDialog(MainActivity.this);
     }
 
@@ -47,36 +90,10 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Logger.out(Logger.INFO, getLocalClassName(), "onCreate", "Application launched");
-        init();
         checkPermission();
-
-        mHandler = new Handler(getMainLooper()) {
-            @Override
-            public void handleMessage(@NonNull Message msg) {
-                switch (Math.abs(msg.what)) {
-                    case MOVE_TASK_TO_BACK:
-                        moveTaskToBack(true);
-                        break;
-                    case PUSH_TESS_OCR:
-                        mTesseractOCR = (TesseractOCR) msg.obj;
-                        break;
-                    case SHOW_PROGRESS_DIALOG:
-                        if (msg.what == HIDE_PROGRESS_DIALOG) mProgressDialog.dismiss();
-                        if (msg.what == SHOW_PROGRESS_DIALOG) {
-                            ProgressDialogHandlerMsg progressDialogHandlerMsg = (ProgressDialogHandlerMsg) msg.obj;
-                            mProgressDialog.setTitle(progressDialogHandlerMsg.mTitle);
-                            mProgressDialog.setMessage(progressDialogHandlerMsg.mMessage);
-                            mProgressDialog.setMax(progressDialogHandlerMsg.maxProgress);
-                            mProgressDialog.setProgress(progressDialogHandlerMsg.mProgress);
-                            mProgressDialog.setProgressStyle(progressDialogHandlerMsg.mProgressStyle);
-                            mProgressDialog.setCancelable(progressDialogHandlerMsg.mCancelable);
-                            mProgressDialog.show();
-                        }
-                        break;
-                }
-            }
-        };
-        new MainThread(MainActivity.this, mHandler).start();
+        initHandler();
+        initObjects();
+        new moe.kmou424.WorldFlipper.Helper.MainThread(MainActivity.this, mHandler).start();
     }
 
     private void checkPermission() {
@@ -86,36 +103,8 @@ public class MainActivity extends AppCompatActivity {
         if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 121);
         }
-    }
-}
-
-class MainThread extends Thread {
-    private final Context mContext;
-    private final Handler mHandler;
-    FileUtils mFileUtils;
-    PreLoader mPreLoader;
-    WFThread<Boolean> mPreLoadFilesChecker;
-    WFThread<TesseractOCR> mOCRLoader;
-
-    public MainThread(Context mContext, Handler mHandler) {
-        this.mContext = mContext;
-        this.mHandler = mHandler;
-    }
-
-    private void init() {
-        mFileUtils = new FileUtils(mContext);
-        mPreLoader = new PreLoader(mContext, mFileUtils, mHandler);
-        mPreLoadFilesChecker = mPreLoader.getPreLoadFilesChecker(null);
-        mOCRLoader = mPreLoader.getOCRLoader(mPreLoadFilesChecker);
-    }
-
-    @Override
-    public void run() {
-        init();
-        mPreLoadFilesChecker.start();
-        mOCRLoader.start();
-        mOCRLoader.waitFor();
-        mHandler.sendMessage(new HandlerMsg<TesseractOCR>().makeMessage(mOCRLoader.getResult(), PUSH_TESS_OCR));
-        mHandler.sendMessage(new HandlerMsg<>().makeMessage(null, MOVE_TASK_TO_BACK));
+        if (!Settings.canDrawOverlays(MainActivity.this)) {
+            startActivityForResult(new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:" + getPackageName())), 122);
+        }
     }
 }

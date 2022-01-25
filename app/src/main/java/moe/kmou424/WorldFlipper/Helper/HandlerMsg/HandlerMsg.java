@@ -1,4 +1,4 @@
-package moe.kmou424.WorldFlipper.Helper.Handler;
+package moe.kmou424.WorldFlipper.Helper.HandlerMsg;
 
 import android.os.Message;
 
@@ -14,6 +14,8 @@ public class HandlerMsg<T> {
     // UI 201-300
     public final static int SHOW_PROGRESS_DIALOG = 201;
     public final static int HIDE_PROGRESS_DIALOG = -SHOW_PROGRESS_DIALOG;
+    public final static int SHOW_FLOATING_WINDOW = 202;
+    public final static int HIDE_FLOATING_WINDOW = SHOW_FLOATING_WINDOW;
 
     /*
     * Convert obj to handler message

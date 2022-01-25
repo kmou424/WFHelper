@@ -8,7 +8,7 @@ android {
 
     defaultConfig {
         applicationId "moe.kmou424.WorldFlipper.Helper"
-        minSdk 21
+        minSdk 23
         targetSdk 25
         versionCode 1
         versionName "1.0"
