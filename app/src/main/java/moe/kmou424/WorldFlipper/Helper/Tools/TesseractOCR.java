@@ -6,7 +6,7 @@ import moe.kmou424.WorldFlipper.Helper.Logger.Logger;
 public class TesseractOCR {
     private final static String LOG_TAG = "TesseractOCR";
     private final TessBaseAPI mTessBaseAPI;
-    public static final String[] TRAINED_DATA_RES_LIST = {"chi_sim.traineddata", "chi_sim_vert.traineddata", "eng.traineddata"};
+    public static final String[] TRAINED_DATA_RES_LIST = {"chi_sim.traineddata", "eng.traineddata"};
 
     public TesseractOCR(String language) {
         this.mTessBaseAPI = new TessBaseAPI();
