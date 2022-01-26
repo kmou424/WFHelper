@@ -19,6 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.button.MaterialButton;
+import com.scottyab.rootbeer.RootBeer;
 
 import moe.kmou424.WorldFlipper.Helper.HandlerMsg.Action.ToastHandlerMsg;
 import moe.kmou424.WorldFlipper.Helper.HandlerMsg.UI.ProgressDialogHandlerMsg;
@@ -28,22 +29,27 @@ import moe.kmou424.WorldFlipper.Helper.Logger.Logger;
 
 import moe.kmou424.WorldFlipper.Helper.Tools.Constructor;
 import moe.kmou424.WorldFlipper.Helper.Tools.FileUtils;
+import moe.kmou424.WorldFlipper.Helper.Tools.RootManager;
 import moe.kmou424.WorldFlipper.Helper.Tools.TesseractOCR;
 import moe.kmou424.WorldFlipper.Helper.Widget.FloatingWindow;
 import moe.kmou424.WorldFlipper.Helper.Widget.ProgressDialog;
 
 public class MainActivity extends AppCompatActivity {
+    private final RootBeer mRootBeer = new RootBeer(MainActivity.this);
 
+    private TextView mRootStatus, mRootLib, mRootAccess;
     private TextView mFloatingStatus;
     private MaterialButton mFloatingSwitch;
     private Handler mHandler;
     private Toast mToast;
 
     private boolean isFloatingWindowShown = false;
+    private boolean isRootAvailable = false;
 
     // Custom Widget
     private moe.kmou424.WorldFlipper.Helper.Widget.ProgressDialog mProgressDialog;
     private FloatingWindow mFloatingWindow;
+    private FloatingWindowListener mFloatingWindowListener;
 
     protected TesseractOCR mTesseractOCR;
 
@@ -68,47 +74,81 @@ public class MainActivity extends AppCompatActivity {
                         mTesseractOCR = tesseractOCRHandlerMsg.getTesseractOCR();
                         break;
                     case SHOW_PROGRESS_DIALOG:
-                        if (msg.what == HIDE_PROGRESS_DIALOG)
+                        if (msg.what == HIDE_PROGRESS_DIALOG) {
                             mProgressDialog.hide();
-                        if (msg.what == SHOW_PROGRESS_DIALOG)
+                            mProgressDialog = null;
+                        }
+                        if (msg.what == SHOW_PROGRESS_DIALOG) {
+                            mProgressDialog = new ProgressDialog(MainActivity.this);
                             mProgressDialog.setAttribute((ProgressDialogHandlerMsg) msg.obj).show();
+                        }
                         break;
                     case SHOW_FLOATING_WINDOW:
                         if (msg.what == SHOW_FLOATING_WINDOW && !isFloatingWindowShown) {
+                            mFloatingWindow = new FloatingWindow(MainActivity.this);
                             mFloatingWindow.show();
-                            new FloatingWindowListener(MainActivity.this, mFloatingWindow, this).bind();
+                            mFloatingWindowListener = new FloatingWindowListener(MainActivity.this, mFloatingWindow, this);
+                            mFloatingWindowListener.bind();
                             isFloatingWindowShown = true;
                         }
                         if (msg.what == HIDE_FLOATING_WINDOW && isFloatingWindowShown) {
                             mFloatingWindow.hide();
+                            mFloatingWindow = null;
+                            mFloatingWindowListener = null;
                             isFloatingWindowShown = false;
                         }
                         break;
                 }
+                System.gc();
             }
         };
     }
 
     void initObjects() {
+        mRootStatus = findViewById(R.id.root_status);
+        mRootLib = findViewById(R.id.root_lib);
+        mRootAccess = findViewById(R.id.root_access);
         mFloatingStatus = findViewById(R.id.floating_status);
         mFloatingSwitch = findViewById(R.id.floating_switch);
         mToast = Toast.makeText(MainActivity.this, null, Toast.LENGTH_LONG);
+    }
 
-        // Custom Widget
-        mProgressDialog = new ProgressDialog(MainActivity.this);
-        mFloatingWindow = new FloatingWindow(MainActivity.this);
+    void initRoot() {
+        if (mRootBeer.isRooted()) {
+            mRootStatus.setText(String.format("%s%s", getString(R.string.root_status_text), getString(R.string.yes)));
+            if (mRootBeer.checkForMagiskBinary())
+                mRootLib.setText(String.format("%s%s", getString(R.string.root_lib_text), getString(R.string.root_lib_magisk_su)));
+            if (mRootBeer.checkForSuBinary())
+                mRootLib.setText(String.format("%s%s", getString(R.string.root_lib_text), getString(R.string.root_lib_super_su)));
+            if (!mRootBeer.checkForMagiskBinary() && !mRootBeer.checkForSuBinary())
+                mRootLib.setText(String.format("%s%s", getString(R.string.root_lib_text), getString(R.string.unknown)));
+        } else {
+            mRootStatus.setText(String.format("%s%s", getString(R.string.root_status_text), getString(R.string.no)));
+            mRootLib.setText(String.format("%s%s", getString(R.string.root_lib_text), getString(R.string.unknown)));
+        }
+        isRootAvailable = RootManager.requestRoot();
+        if (isRootAvailable) {
+            mRootAccess.setText(String.format("%s%s", getString(R.string.root_access), getString(R.string.yes)));
+        } else {
+            mRootAccess.setText(String.format("%s%s", getString(R.string.root_access), getString(R.string.no)));
+        }
     }
 
     private void bindListeners() {
         mFloatingSwitch.setOnClickListener(view -> {
-            if (isFloatingWindowShown) {
-                mFloatingStatus.setText(getString(R.string.status_hidden));
-                mFloatingSwitch.setText(getString(R.string.show_floating));
-                mHandler.sendEmptyMessage(HIDE_FLOATING_WINDOW);
+            if (isRootAvailable) {
+                if (isFloatingWindowShown) {
+                    mFloatingStatus.setText(getString(R.string.status_hidden));
+                    mFloatingSwitch.setText(getString(R.string.show_floating));
+                    mHandler.sendEmptyMessage(HIDE_FLOATING_WINDOW);
+                } else {
+                    mFloatingStatus.setText(getString(R.string.status_shown));
+                    mFloatingSwitch.setText(getString(R.string.hide_floating));
+                    mHandler.sendEmptyMessage(SHOW_FLOATING_WINDOW);
+                }
             } else {
-                mFloatingStatus.setText(getString(R.string.status_shown));
-                mFloatingSwitch.setText(getString(R.string.hide_floating));
-                mHandler.sendEmptyMessage(SHOW_FLOATING_WINDOW);
+                mToast.setText("请先授予Root再启动悬浮窗");
+                mToast.show();
             }
         });
     }
@@ -123,8 +163,9 @@ public class MainActivity extends AppCompatActivity {
         checkPermission();
         initHandler();
         initObjects();
+        initRoot();
         bindListeners();
-        new moe.kmou424.WorldFlipper.Helper.MainThread(MainActivity.this, mHandler).start();
+        new MainThread(MainActivity.this, mHandler).start();
     }
 
     private void checkPermission() {

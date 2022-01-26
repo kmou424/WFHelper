@@ -1,6 +1,16 @@
 <resources>
     <string name="app_name">WFHelper</string>
 
+    <string name="root_status_text">手机是否具有Root: </string>
+    <string name="root_lib_text">Su类型: </string>
+    <string name="root_lib_magisk_su">MagiskSU</string>
+    <string name="root_lib_super_su">SuperSU</string>
+    <string name="root_access">是否已获取Root: </string>
+
+    <string name="yes">是</string>
+    <string name="no">否</string>
+    <string name="unknown">未知</string>
+
     <string name="status_hidden">状态: 未显示</string>
     <string name="status_shown">状态: 已显示</string>
 
