@@ -1,13 +1,15 @@
-package moe.kmou424.WorldFlipper.Helper.HandlerMsg;
+package moe.kmou424.WorldFlipper.Helper.HandlerMsg.Push;
 
 import moe.kmou424.WorldFlipper.Helper.Tools.TesseractOCR;
 
 public class TesseractOCRHandlerMsg {
-    private final static String LOG_TAG = "TesseractOCRHandlerMsg";
-
-    public TesseractOCR mTesseractOCR;
+    private final TesseractOCR mTesseractOCR;
 
     public TesseractOCRHandlerMsg(TesseractOCR mTesseractOCR) {
         this.mTesseractOCR = mTesseractOCR;
+    }
+
+    public TesseractOCR getTesseractOCR() {
+        return this.mTesseractOCR;
     }
 }

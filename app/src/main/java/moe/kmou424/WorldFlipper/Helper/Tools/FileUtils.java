@@ -2,6 +2,7 @@ package moe.kmou424.WorldFlipper.Helper.Tools;
 
 import android.content.Context;
 import android.os.Environment;
+import android.util.Log;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -10,11 +11,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 public class FileUtils {
-    private final Context mContext;
-
-    public FileUtils(Context mContext) {
-        this.mContext = mContext;
-    }
+    private final static String LOG_TAG = "FileUtils";
 
     /*
      * Get external storage root dir of application
@@ -28,8 +25,8 @@ public class FileUtils {
      * mOutputDir: Target directory on external storage
      * mFileName: Relative path of asset file in apk
      */
-    public void copyAssets(String mOutputDir, String mFileName) {
-        if (isDirExist(mOutputDir)) {
+    public static void copyAssets(Context mContext, String mOutputDir, String mFileName) {
+        if (!isDirExist(mOutputDir)) {
             if (!createDir(mOutputDir)) return;
         }
         InputStream myInput;
@@ -55,9 +52,12 @@ public class FileUtils {
      * Detect a file if it is accessed
      * mPath: Target file path
      */
-    public static boolean deleteFile(String mPath) {
+    public static void deleteFile(String mPath) {
         File file = new File(mPath);
-        return file.delete();
+        if (file.delete())
+            Log.d(LOG_TAG, "deleteFile: Delete \"" + mPath + "\" successfully");
+        else
+            Log.w(LOG_TAG, "deleteFile: Delete \"" + mPath + "\" failed");
     }
 
     /*
@@ -75,7 +75,7 @@ public class FileUtils {
      */
     public static boolean isDirExist(String mDirPath) {
         File folder = new File(mDirPath);
-        return !folder.exists() || !folder.isDirectory();
+        return folder.exists() || folder.isDirectory();
     }
 
     /*
@@ -84,7 +84,7 @@ public class FileUtils {
     */
     public static boolean isFileExist(String mFilePath) {
         File file = new File(mFilePath);
-        return !file.exists() || !file.isFile();
+        return file.exists();
     }
 
     /*

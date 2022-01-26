@@ -1,13 +1,10 @@
-package moe.kmou424.WorldFlipper.Helper.HandlerMsg;
+package moe.kmou424.WorldFlipper.Helper.HandlerMsg.UI;
 
 import android.app.ProgressDialog;
 
 public class ProgressDialogHandlerMsg {
-    private final static String LOG_TAG = "ProgressDialogHandlerMsg";
-
     public String mTitle, mMessage;
-    public int mProgress, maxProgress;
-    public int mProgressStyle;
+    public int mProgress, maxProgress, mProgressStyle;
     public boolean mCancelable;
 
     public final static int STYLE_HORIZONTAL = ProgressDialog.STYLE_HORIZONTAL;

@@ -3,8 +3,8 @@ package moe.kmou424.WorldFlipper.Helper.Thread;
 import android.os.Handler;
 import android.os.Looper;
 
-import moe.kmou424.WorldFlipper.Helper.HandlerMsg.ProgressDialogHandlerMsg;
-import moe.kmou424.WorldFlipper.Helper.HandlerMsg.HandlerMsg;
+import moe.kmou424.WorldFlipper.Helper.HandlerMsg.UI.ProgressDialogHandlerMsg;
+import moe.kmou424.WorldFlipper.Helper.HandlerMsg.HandlerMessage;
 import moe.kmou424.WorldFlipper.Helper.Logger.Logger;
 
 public class WFThread extends Thread {
@@ -30,7 +30,7 @@ public class WFThread extends Thread {
         if (mLastThread != null) {
             if (mHandler != null) {
                 mProgressDialogHandlerMsg.mMessage = "等待线程 " + "\"" + mLastThread.getName() + "\"";
-                mHandler.sendMessage(new HandlerMsg<ProgressDialogHandlerMsg>().makeMessage(mProgressDialogHandlerMsg, HandlerMsg.SHOW_PROGRESS_DIALOG));
+                mHandler.sendMessage(new HandlerMessage<ProgressDialogHandlerMsg>().make(mProgressDialogHandlerMsg, HandlerMessage.SHOW_PROGRESS_DIALOG));
             }
             while (mLastThread.isAlive()) {
                 Logger.out(Logger.INFO, LOG_TAG,  "run",
@@ -42,7 +42,7 @@ public class WFThread extends Thread {
                 }
             }
             if (mHandler != null) {
-                mHandler.sendMessage(new HandlerMsg<ProgressDialogHandlerMsg>().makeMessage(null, HandlerMsg.HIDE_PROGRESS_DIALOG));
+                mHandler.sendMessage(new HandlerMessage<ProgressDialogHandlerMsg>().make(null, HandlerMessage.HIDE_PROGRESS_DIALOG));
             }
         }
     }

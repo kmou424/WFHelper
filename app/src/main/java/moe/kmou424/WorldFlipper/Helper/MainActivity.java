@@ -1,6 +1,6 @@
 package moe.kmou424.WorldFlipper.Helper;
 
-import static moe.kmou424.WorldFlipper.Helper.HandlerMsg.HandlerMsg.*;
+import static moe.kmou424.WorldFlipper.Helper.HandlerMsg.HandlerMessage.*;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -8,7 +8,6 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -16,60 +15,74 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.Settings;
-import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import moe.kmou424.WorldFlipper.Helper.HandlerMsg.FloatingWindowHandlerMsg;
-import moe.kmou424.WorldFlipper.Helper.HandlerMsg.ProgressDialogHandlerMsg;
-import moe.kmou424.WorldFlipper.Helper.HandlerMsg.TesseractOCRHandlerMsg;
-import moe.kmou424.WorldFlipper.Helper.Listener.FloatingOnTouchListener;
+import com.google.android.material.button.MaterialButton;
+
+import moe.kmou424.WorldFlipper.Helper.HandlerMsg.Action.ToastHandlerMsg;
+import moe.kmou424.WorldFlipper.Helper.HandlerMsg.UI.ProgressDialogHandlerMsg;
+import moe.kmou424.WorldFlipper.Helper.HandlerMsg.Push.TesseractOCRHandlerMsg;
+import moe.kmou424.WorldFlipper.Helper.Listener.FloatingWindowListener;
 import moe.kmou424.WorldFlipper.Helper.Logger.Logger;
 
+import moe.kmou424.WorldFlipper.Helper.Tools.Constructor;
+import moe.kmou424.WorldFlipper.Helper.Tools.FileUtils;
 import moe.kmou424.WorldFlipper.Helper.Tools.TesseractOCR;
+import moe.kmou424.WorldFlipper.Helper.Widget.FloatingWindow;
 import moe.kmou424.WorldFlipper.Helper.Widget.ProgressDialog;
 
 public class MainActivity extends AppCompatActivity {
 
-    //private TextView mMainLog;
+    private TextView mFloatingStatus;
+    private MaterialButton mFloatingSwitch;
     private Handler mHandler;
     private Toast mToast;
 
+    private boolean isFloatingWindowShown = false;
+
     // Custom Widget
     private moe.kmou424.WorldFlipper.Helper.Widget.ProgressDialog mProgressDialog;
+    private FloatingWindow mFloatingWindow;
 
     protected TesseractOCR mTesseractOCR;
 
-
     void initHandler() {
         mHandler = new Handler(getMainLooper()) {
-            @SuppressLint("ClickableViewAccessibility")
             @Override
             public void handleMessage(@NonNull Message msg) {
                 switch (Math.abs(msg.what)) {
                     case MOVE_TASK_TO_BACK:
                         moveTaskToBack(true);
                         break;
+                    case SHOW_TOAST:
+                        ToastHandlerMsg toastHandlerMsg = new Constructor<>(
+                                (ToastHandlerMsg) msg.obj
+                        ).make();
+                        mToast.setText(toastHandlerMsg.getToastMessage());
+                        mToast.setDuration(toastHandlerMsg.mDuration);
+                        mToast.show();
+                        break;
                     case PUSH_TESS_OCR:
-                        TesseractOCRHandlerMsg tesseractOCRHandlerMsg = (TesseractOCRHandlerMsg) msg.obj;
-                        mTesseractOCR = tesseractOCRHandlerMsg.mTesseractOCR;
+                        TesseractOCRHandlerMsg tesseractOCRHandlerMsg = new Constructor<>((TesseractOCRHandlerMsg) msg.obj).make();
+                        mTesseractOCR = tesseractOCRHandlerMsg.getTesseractOCR();
                         break;
                     case SHOW_PROGRESS_DIALOG:
-                        if (msg.what == HIDE_PROGRESS_DIALOG) mProgressDialog.hide();
-                        if (msg.what == SHOW_PROGRESS_DIALOG) {
-                            mProgressDialog.setAttribute((ProgressDialogHandlerMsg) msg.obj);
-                            mProgressDialog.show();
-                        }
+                        if (msg.what == HIDE_PROGRESS_DIALOG)
+                            mProgressDialog.hide();
+                        if (msg.what == SHOW_PROGRESS_DIALOG)
+                            mProgressDialog.setAttribute((ProgressDialogHandlerMsg) msg.obj).show();
                         break;
                     case SHOW_FLOATING_WINDOW:
-                        FloatingWindowHandlerMsg fwh_msg = (FloatingWindowHandlerMsg) msg.obj;
-                        fwh_msg.mWindowManager.addView(fwh_msg.mView, fwh_msg.mLayoutParams);
-                        fwh_msg.mView.setOnTouchListener(new FloatingOnTouchListener(fwh_msg));
-                        fwh_msg.mView.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-
-                            }
-                        });
+                        if (msg.what == SHOW_FLOATING_WINDOW && !isFloatingWindowShown) {
+                            mFloatingWindow.show();
+                            new FloatingWindowListener(MainActivity.this, mFloatingWindow, this).bind();
+                            isFloatingWindowShown = true;
+                        }
+                        if (msg.what == HIDE_FLOATING_WINDOW && isFloatingWindowShown) {
+                            mFloatingWindow.hide();
+                            isFloatingWindowShown = false;
+                        }
                         break;
                 }
             }
@@ -77,22 +90,40 @@ public class MainActivity extends AppCompatActivity {
     }
 
     void initObjects() {
-        //mMainLog = findViewById(R.id.main_log);
+        mFloatingStatus = findViewById(R.id.floating_status);
+        mFloatingSwitch = findViewById(R.id.floating_switch);
         mToast = Toast.makeText(MainActivity.this, null, Toast.LENGTH_LONG);
 
         // Custom Widget
         mProgressDialog = new ProgressDialog(MainActivity.this);
+        mFloatingWindow = new FloatingWindow(MainActivity.this);
     }
 
-    @SuppressLint("HandlerLeak")
+    private void bindListeners() {
+        mFloatingSwitch.setOnClickListener(view -> {
+            if (isFloatingWindowShown) {
+                mFloatingStatus.setText(getString(R.string.status_hidden));
+                mFloatingSwitch.setText(getString(R.string.show_floating));
+                mHandler.sendEmptyMessage(HIDE_FLOATING_WINDOW);
+            } else {
+                mFloatingStatus.setText(getString(R.string.status_shown));
+                mFloatingSwitch.setText(getString(R.string.hide_floating));
+                mHandler.sendEmptyMessage(SHOW_FLOATING_WINDOW);
+            }
+        });
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        if (!FileUtils.isDirExist(FileUtils.getExternalRoot())) FileUtils.createDir(FileUtils.getExternalRoot());
+        FileUtils.deleteFile(FileUtils.getExternalRoot() + "/log.txt");
         Logger.out(Logger.INFO, getLocalClassName(), "onCreate", "Application launched");
         checkPermission();
         initHandler();
         initObjects();
+        bindListeners();
         new moe.kmou424.WorldFlipper.Helper.MainThread(MainActivity.this, mHandler).start();
     }
 

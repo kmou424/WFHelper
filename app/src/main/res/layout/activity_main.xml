@@ -7,9 +7,26 @@
     tools:context="moe.kmou424.WorldFlipper.Helper.MainActivity"
     android:padding="10dp">
 
-    <TextView
-        android:id="@+id/main_log"
+    <LinearLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_gravity="center"
+        android:gravity="center" >
+
+        <TextView
+            android:id="@+id/floating_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/status_hidden" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/floating_switch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAllCaps="false"
+            android:text="@string/show_floating" />
+
+    </LinearLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

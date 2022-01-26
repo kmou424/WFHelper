@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">WFHelper</string>
+
+    <string name="status_hidden">状态: 未显示</string>
+    <string name="status_shown">状态: 已显示</string>
+
+    <string name="show_floating">开启悬浮窗</string>
+    <string name="hide_floating">隐藏悬浮窗</string>
 </resources>

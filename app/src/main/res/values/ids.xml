@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="floatingMainView" type="id"/>
+    <item name="floatingMainButton" type="id"/>
+    <item name="floatingSubView" type="id"/>
+    <item name="floatingSubButton1" type="id"/>
+    <item name="floatingSubButton2" type="id"/>
+    <item name="floatingSubButton3" type="id"/>
+</resources>
