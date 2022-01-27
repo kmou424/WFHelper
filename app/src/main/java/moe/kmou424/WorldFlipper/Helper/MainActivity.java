@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.Settings;
+import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,23 +25,23 @@ import com.scottyab.rootbeer.RootBeer;
 import moe.kmou424.WorldFlipper.Helper.HandlerMsg.Action.ToastHandlerMsg;
 import moe.kmou424.WorldFlipper.Helper.HandlerMsg.UI.ProgressDialogHandlerMsg;
 import moe.kmou424.WorldFlipper.Helper.HandlerMsg.Push.TesseractOCRHandlerMsg;
-import moe.kmou424.WorldFlipper.Helper.Listener.FloatingWindowListener;
 import moe.kmou424.WorldFlipper.Helper.Logger.Logger;
 
+import moe.kmou424.WorldFlipper.Helper.Service.FloatingWindowService;
 import moe.kmou424.WorldFlipper.Helper.Tools.Constructor;
 import moe.kmou424.WorldFlipper.Helper.Tools.FileUtils;
 import moe.kmou424.WorldFlipper.Helper.Tools.RootManager;
 import moe.kmou424.WorldFlipper.Helper.Tools.TesseractOCR;
-import moe.kmou424.WorldFlipper.Helper.Widget.FloatingWindow;
 import moe.kmou424.WorldFlipper.Helper.Widget.ProgressDialog;
 
 public class MainActivity extends AppCompatActivity {
+    public static Handler mHandler;
+
     private final RootBeer mRootBeer = new RootBeer(MainActivity.this);
 
     private TextView mRootStatus, mRootLib, mRootAccess;
     private TextView mFloatingStatus;
     private MaterialButton mFloatingSwitch;
-    private Handler mHandler;
     private Toast mToast;
 
     private boolean isFloatingWindowShown = false;
@@ -48,8 +49,8 @@ public class MainActivity extends AppCompatActivity {
 
     // Custom Widget
     private moe.kmou424.WorldFlipper.Helper.Widget.ProgressDialog mProgressDialog;
-    private FloatingWindow mFloatingWindow;
-    private FloatingWindowListener mFloatingWindowListener;
+
+    private Intent mFloatingWindowServiceIntent;
 
     protected TesseractOCR mTesseractOCR;
 
@@ -85,16 +86,11 @@ public class MainActivity extends AppCompatActivity {
                         break;
                     case SHOW_FLOATING_WINDOW:
                         if (msg.what == SHOW_FLOATING_WINDOW && !isFloatingWindowShown) {
-                            mFloatingWindow = new FloatingWindow(MainActivity.this);
-                            mFloatingWindow.show();
-                            mFloatingWindowListener = new FloatingWindowListener(MainActivity.this, mFloatingWindow, this);
-                            mFloatingWindowListener.bind();
+                            startService(mFloatingWindowServiceIntent);
                             isFloatingWindowShown = true;
                         }
                         if (msg.what == HIDE_FLOATING_WINDOW && isFloatingWindowShown) {
-                            mFloatingWindow.hide();
-                            mFloatingWindow = null;
-                            mFloatingWindowListener = null;
+                            stopService(mFloatingWindowServiceIntent);
                             isFloatingWindowShown = false;
                         }
                         break;
@@ -111,6 +107,8 @@ public class MainActivity extends AppCompatActivity {
         mFloatingStatus = findViewById(R.id.floating_status);
         mFloatingSwitch = findViewById(R.id.floating_switch);
         mToast = Toast.makeText(MainActivity.this, null, Toast.LENGTH_LONG);
+
+        mFloatingWindowServiceIntent = new Intent(MainActivity.this, FloatingWindowService.class);
     }
 
     void initRoot() {
@@ -178,5 +176,11 @@ public class MainActivity extends AppCompatActivity {
         if (!Settings.canDrawOverlays(MainActivity.this)) {
             startActivityForResult(new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:" + getPackageName())), 122);
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        stopService(mFloatingWindowServiceIntent);
     }
 }

@@ -13,6 +13,7 @@ import android.widget.LinearLayout;
 import moe.kmou424.WorldFlipper.Helper.Constant;
 import moe.kmou424.WorldFlipper.Helper.HandlerMsg.Action.ToastHandlerMsg;
 import moe.kmou424.WorldFlipper.Helper.HandlerMsg.HandlerMessage;
+import moe.kmou424.WorldFlipper.Helper.MainActivity;
 import moe.kmou424.WorldFlipper.Helper.R;
 import moe.kmou424.WorldFlipper.Helper.Tools.ScreenUtils;
 import moe.kmou424.WorldFlipper.Helper.Widget.FloatingWindow;
@@ -23,10 +24,10 @@ public class FloatingWindowListener {
     private final FloatingWindow mFloatingWindow;
     private final Handler mHandler;
 
-    public FloatingWindowListener(Context mContext, FloatingWindow mFloatingWindow, Handler mHandler) {
+    public FloatingWindowListener(Context mContext, FloatingWindow mFloatingWindow) {
         this.mContext = mContext;
         this.mFloatingWindow = mFloatingWindow;
-        this.mHandler = mHandler;
+        this.mHandler = MainActivity.mHandler;
     }
 
     public void bind() {

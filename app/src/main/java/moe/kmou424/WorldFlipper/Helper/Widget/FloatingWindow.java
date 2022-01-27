@@ -1,8 +1,8 @@
 package moe.kmou424.WorldFlipper.Helper.Widget;
 
 import android.animation.LayoutTransition;
-import android.app.Activity;
 import android.content.Context;
+import android.content.ContextWrapper;
 import android.graphics.PixelFormat;
 import android.os.Build;
 import android.view.Gravity;
@@ -24,8 +24,8 @@ public class FloatingWindow {
     public WindowManager.LayoutParams mLayoutParams;
     public LinearLayout mRootView;
 
-    public FloatingWindow(Activity mActivity) {
-        this.mWindowManager = (WindowManager) mActivity.getSystemService(Context.WINDOW_SERVICE);
+    public FloatingWindow(ContextWrapper mContextWrapper) {
+        this.mWindowManager = (WindowManager) mContextWrapper.getSystemService(Context.WINDOW_SERVICE);
         mLayoutParams = new WindowManager.LayoutParams();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             mLayoutParams.type = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
@@ -41,8 +41,8 @@ public class FloatingWindow {
         mLayoutParams.y = 300;
 
         // Left Widgets: Main button
-        ImageView mMainButtonImageView = new ImageView(mActivity.getApplicationContext());
-        mMainButtonImageView.setImageDrawable(AppCompatResources.getDrawable((Context) mActivity, R.mipmap.ic_launcher));
+        ImageView mMainButtonImageView = new ImageView(mContextWrapper.getApplicationContext());
+        mMainButtonImageView.setImageDrawable(AppCompatResources.getDrawable(mContextWrapper, R.mipmap.ic_launcher));
         mMainButtonImageView.setClickable(true);
         mMainButtonImageView.setId(R.id.floatingMainButton);
 
@@ -50,25 +50,25 @@ public class FloatingWindow {
         FrameLayout.LayoutParams mMainViewParams = new FrameLayout.LayoutParams(
                 FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT
         );
-        FrameLayout mMainView = new FrameLayout((Context) mActivity);
+        FrameLayout mMainView = new FrameLayout(mContextWrapper);
         mMainView.setId(R.id.floatingMainView);
         mMainView.setLayoutParams(mMainViewParams);
         mMainView.addView(mMainButtonImageView);
 
         // Right Widgets: Sub buttons
         // Button1
-        ImageView mSubButtonImageView1 = new ImageView(mActivity.getApplicationContext());
-        mSubButtonImageView1.setImageDrawable(AppCompatResources.getDrawable((Context) mActivity, R.mipmap.ic_screenshot));
+        ImageView mSubButtonImageView1 = new ImageView(mContextWrapper.getApplicationContext());
+        mSubButtonImageView1.setImageDrawable(AppCompatResources.getDrawable(mContextWrapper, R.mipmap.ic_screenshot));
         mSubButtonImageView1.setClickable(true);
         mSubButtonImageView1.setId(R.id.floatingSubButton1);
         // Button2
-        ImageView mSubButtonImageView2 = new ImageView(mActivity.getApplicationContext());
-        mSubButtonImageView2.setImageDrawable(AppCompatResources.getDrawable((Context) mActivity, R.mipmap.ic_settings));
+        ImageView mSubButtonImageView2 = new ImageView(mContextWrapper.getApplicationContext());
+        mSubButtonImageView2.setImageDrawable(AppCompatResources.getDrawable(mContextWrapper, R.mipmap.ic_settings));
         mSubButtonImageView2.setClickable(true);
         mSubButtonImageView2.setId(R.id.floatingSubButton2);
         // Button3
-        ImageView mSubButtonImageView3 = new ImageView(mActivity.getApplicationContext());
-        mSubButtonImageView3.setImageDrawable(AppCompatResources.getDrawable((Context) mActivity, R.mipmap.ic_quit));
+        ImageView mSubButtonImageView3 = new ImageView(mContextWrapper.getApplicationContext());
+        mSubButtonImageView3.setImageDrawable(AppCompatResources.getDrawable(mContextWrapper, R.mipmap.ic_quit));
         mSubButtonImageView3.setClickable(true);
         mSubButtonImageView3.setId(R.id.floatingSubButton3);
 
@@ -76,7 +76,7 @@ public class FloatingWindow {
         LinearLayout.LayoutParams mSubViewParams = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT
         );
-        LinearLayout mSubView = new LinearLayout((Context) mActivity);
+        LinearLayout mSubView = new LinearLayout(mContextWrapper);
         mSubView.setId(R.id.floatingSubView);
         mSubView.setLayoutParams(mSubViewParams);
         mSubView.setOrientation(LinearLayout.VERTICAL);
@@ -90,7 +90,7 @@ public class FloatingWindow {
         LinearLayout.LayoutParams mRootViewParams = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT
         );
-        this.mRootView = new LinearLayout((Context) mActivity);
+        this.mRootView = new LinearLayout(mContextWrapper);
         LayoutTransition mRootViewAnim = new LayoutTransition();
         mRootViewAnim.addTransitionListener(new HideAfterTransitionListener());
         mRootView.setLayoutTransition(mRootViewAnim);
