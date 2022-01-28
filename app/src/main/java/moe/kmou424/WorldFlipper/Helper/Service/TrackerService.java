@@ -158,7 +158,12 @@ public class TrackerService extends Service {
                         }
                         break;
                     case GO_MAIN_PAGE:
-                        checkIsHomePage();
+                        if (!checkIsHomePage()) {
+                            if (CheckPoints.BOTTOM_NAV_HOME_INACTIVATE_COLOR.check(BitmapUtils.getPixelRgbInfo(mBitmap, CoordinatePoints.BOTTOM_NAV_HOME_COLOR))) {
+                                SimulateTouch.click(CoordinatePoints.BOTTOM_NAV_HOME_COLOR);
+                                mNowTask = NO_TASK;
+                            }
+                        }
                         break;
                 }
             }
@@ -177,11 +182,6 @@ public class TrackerService extends Service {
 
     private boolean checkIsHomePage() {
         if (DEBUG) Log.d(LOG_TAG, "checkIsHomePage");
-        if (CheckPoints.BOTTOM_NAV_HOME_INACTIVATE_COLOR.check(BitmapUtils.getPixelRgbInfo(mBitmap, CoordinatePoints.BOTTOM_NAV_HOME_COLOR))) {
-            SimulateTouch.click(CoordinatePoints.BOTTOM_NAV_HOME_COLOR);
-            mNowTask = NO_TASK;
-            return true;
-        }
         if (CheckPoints.BOTTOM_NAV_HOME_ACTIVATE_COLOR.check(BitmapUtils.getPixelRgbInfo(mBitmap, CoordinatePoints.BOTTOM_NAV_HOME_COLOR))) {
             mNowTask = NO_TASK;
             return true;
