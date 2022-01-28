@@ -154,7 +154,10 @@ public class TrackerService extends Service {
                                 SimulateTouch.click(CoordinatePoints.BOTTOM_QUIT_ROOM);
                                 mNowTask = GO_MAIN_PAGE;
                                 isContinueClicked = false;
+                                break;
                             }
+                            // 无脑暴力点击，解决所有特殊事件XD
+                            SimulateTouch.click(CoordinatePoints.BOTTOM_CONTINUE);
                         }
                         break;
                     case GO_MAIN_PAGE:
