@@ -1,11 +1,17 @@
 package moe.kmou424.WorldFlipper.Helper.Tools;
 
 import android.annotation.SuppressLint;
+import android.graphics.Point;
+import android.util.Log;
 
 import java.io.OutputStream;
 
+import moe.kmou424.WorldFlipper.Helper.Constants.Global;
+import moe.kmou424.WorldFlipper.Helper.Logger.Logger;
+
 @SuppressLint("DefaultLocale")
 public class SimulateTouch {
+    private final static String LOG_TAG = "SimulateTouch";
     private static Process process;
     private static OutputStream os;
 
@@ -26,7 +32,9 @@ public class SimulateTouch {
         exec(String.format("input keyevent %d &\n", keyCode));
     }
 
-    public static void click(int x, int y) {
-        exec(String.format("input tap %d %d &\n", x, y));
+    public static void click(Point mPoint) {
+        exec(String.format("input tap %d %d &\n", mPoint.x, mPoint.y));
+        if (Global.DEBUG) Log.d(LOG_TAG, String.format("click: (%d, %d)", mPoint.x, mPoint.y));
+        Logger.out(Logger.INFO, LOG_TAG, "click", String.format("(%d, %d)", mPoint.x, mPoint.y));
     }
 }

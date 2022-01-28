@@ -6,4 +6,7 @@
     <item name="floatingSubButton1" type="id"/>
     <item name="floatingSubButton2" type="id"/>
     <item name="floatingSubButton3" type="id"/>
+
+    <item name="wf_wait_others_ready_checkbox" type="id"/>
+    <item name="wf_bell_tracker_switch" type="id"/>
 </resources>

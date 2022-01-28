@@ -1,19 +1,33 @@
 <resources>
     <string name="app_name">WFHelper</string>
 
-    <string name="root_status_text">手机是否具有Root: </string>
-    <string name="root_lib_text">Su类型: </string>
+    <string name="root_status_text">具有Root:</string>
+    <string name="root_lib_text">Su类型:</string>
     <string name="root_lib_magisk_su">MagiskSU</string>
     <string name="root_lib_super_su">SuperSU</string>
-    <string name="root_access">是否已获取Root: </string>
+    <string name="root_access">已授权Root:</string>
 
     <string name="yes">是</string>
     <string name="no">否</string>
     <string name="unknown">未知</string>
 
-    <string name="status_hidden">状态: 未显示</string>
-    <string name="status_shown">状态: 已显示</string>
+    <string name="status_hidden">悬浮窗状态: 未显示</string>
+    <string name="status_shown">悬浮窗状态: 已显示</string>
 
     <string name="show_floating">开启悬浮窗</string>
     <string name="hide_floating">隐藏悬浮窗</string>
+
+    <string name="start_tracker">开始运行任务</string>
+    <string name="stop_tracker">停止所有任务</string>
+    <string name="cancel">取消</string>
+
+    <string name="wf_notice_header">注意</string>
+    <string name="wf_notice_content">
+        1. 启动服务前请确保您现在所处页面为主城，否则可能会发生意想不到的后果\n
+        2. 请将悬浮窗放置在屏幕中部，以免遮挡控件影响识别\n
+        3. 启动服务前请前往您的Root管理软件关闭本App的Root授权提示，以免频繁弹出的提示遮挡界面，影响识别效果\n
+        4. 请确保您的模拟器/手机的Android版本为5.1 – 7.1，否则可能会运行异常
+    </string>
+    <string name="wf_wait_for_others_ready_checkbox_text">等待其他人准备完成再准备</string>
+    <string name="wf_bell_tracker_switch_text">监听铃铛</string>
 </resources>

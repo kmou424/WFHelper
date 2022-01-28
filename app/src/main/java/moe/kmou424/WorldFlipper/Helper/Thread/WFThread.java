@@ -6,6 +6,7 @@ import android.os.Looper;
 import moe.kmou424.WorldFlipper.Helper.HandlerMsg.UI.ProgressDialogHandlerMsg;
 import moe.kmou424.WorldFlipper.Helper.HandlerMsg.HandlerMessage;
 import moe.kmou424.WorldFlipper.Helper.Logger.Logger;
+import moe.kmou424.WorldFlipper.Helper.MainActivity;
 
 public class WFThread extends Thread {
     private final static String LOG_TAG = "WFThread";
@@ -14,8 +15,8 @@ public class WFThread extends Thread {
     private final Thread mLastThread;
     private final ProgressDialogHandlerMsg mProgressDialogHandlerMsg;
 
-    public WFThread(Handler mHandler, Thread mLastThread) {
-        this.mHandler = mHandler;
+    public WFThread(Thread mLastThread) {
+        this.mHandler = MainActivity.mHandler;
         this.mLastThread = mLastThread;
         this.mProgressDialogHandlerMsg = new ProgressDialogHandlerMsg(null, null, 0, 0, ProgressDialogHandlerMsg.STYLE_SPINNER, false);
     }

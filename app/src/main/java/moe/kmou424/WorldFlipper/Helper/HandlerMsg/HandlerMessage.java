@@ -6,15 +6,25 @@ public class HandlerMessage<T> {
     // Action 1-100
     public final static int MOVE_TASK_TO_BACK = 1;
     public final static int SHOW_TOAST = 2;
+    public final static int SHOW_FLOATING_WINDOW = 3;
+    public final static int HIDE_FLOATING_WINDOW = -SHOW_FLOATING_WINDOW;
+    public final static int START_TRACKER_SERVICE = 4;
+    public final static int STOP_TRACKER_SERVICE = -START_TRACKER_SERVICE;
 
     // PUSH 101-200
-    public final static int PUSH_TESS_OCR = 101;
 
     // UI 201-300
     public final static int SHOW_PROGRESS_DIALOG = 201;
     public final static int HIDE_PROGRESS_DIALOG = -SHOW_PROGRESS_DIALOG;
-    public final static int SHOW_FLOATING_WINDOW = 202;
-    public final static int HIDE_FLOATING_WINDOW = -SHOW_FLOATING_WINDOW;
+    public final static int SHOW_WF_PANEL = 202;
+    public final static int HIDE_WF_PANEL = -SHOW_WF_PANEL;
+
+    // Tracker Action 301+
+    public final static int GO_CHECK_BITMAP = 301;
+    public final static int GO_BELL = 302;
+    public final static int GO_PREPARE_AS_GUEST = 303;
+    public final static int GO_WAITING_FOR_FINISH = 304;
+    public final static int GO_MAIN_PAGE = 305;
 
     /*
     * Convert obj to handler message

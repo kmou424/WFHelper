@@ -2,6 +2,7 @@ package moe.kmou424.WorldFlipper.Helper.Logger;
 
 import android.annotation.SuppressLint;
 
+import moe.kmou424.WorldFlipper.Helper.Constants.Global;
 import moe.kmou424.WorldFlipper.Helper.Tools.FileUtils;
 
 import java.io.FileNotFoundException;
@@ -37,17 +38,15 @@ public class Logger {
     }
 
     private static String getLoggerTime() {
-        @SuppressLint("SimpleDateFormat") SimpleDateFormat formatter= new SimpleDateFormat("[yyyy-MM-dd HH:mm:ss]");
+        @SuppressLint("SimpleDateFormat") SimpleDateFormat formatter= new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date date = new Date(System.currentTimeMillis());
         return formatter.format(date);
     }
 
     public static void out(int mLoggerLevel, String mLogClass, String mLogMethod, String mLogText) {
+        if (!Global.DEBUG && mLoggerLevel < INFO) return;
         redirectOutStream();
-        System.out.print(getLoggerTime() +
-                " [" + LoggerLevel[mLoggerLevel] + "] " +
-                mLogClass + "." + mLogMethod + "(): " +
-                mLogText + "\n");
+        System.out.printf("[%s] [%s] %s.%s(): %s\n", getLoggerTime(), LoggerLevel[mLoggerLevel], mLogClass, mLogMethod, mLogText);
         restoreOutStream();
     }
 }

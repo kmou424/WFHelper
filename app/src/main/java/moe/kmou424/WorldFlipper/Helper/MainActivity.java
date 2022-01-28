@@ -9,33 +9,36 @@ import androidx.core.content.ContextCompat;
 
 import android.Manifest;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.provider.Settings;
-import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.button.MaterialButton;
 import com.scottyab.rootbeer.RootBeer;
 
+import moe.kmou424.WorldFlipper.Helper.Constants.Global;
 import moe.kmou424.WorldFlipper.Helper.HandlerMsg.Action.ToastHandlerMsg;
 import moe.kmou424.WorldFlipper.Helper.HandlerMsg.UI.ProgressDialogHandlerMsg;
-import moe.kmou424.WorldFlipper.Helper.HandlerMsg.Push.TesseractOCRHandlerMsg;
 import moe.kmou424.WorldFlipper.Helper.Logger.Logger;
 
 import moe.kmou424.WorldFlipper.Helper.Service.FloatingWindowService;
 import moe.kmou424.WorldFlipper.Helper.Tools.Constructor;
 import moe.kmou424.WorldFlipper.Helper.Tools.FileUtils;
 import moe.kmou424.WorldFlipper.Helper.Tools.RootManager;
-import moe.kmou424.WorldFlipper.Helper.Tools.TesseractOCR;
+import moe.kmou424.WorldFlipper.Helper.Service.TrackerService;
 import moe.kmou424.WorldFlipper.Helper.Widget.ProgressDialog;
+import moe.kmou424.WorldFlipper.Helper.Widget.WFPanel;
 
 public class MainActivity extends AppCompatActivity {
     public static Handler mHandler;
+    public static SharedPreferences mSharedPreferences;
 
     private final RootBeer mRootBeer = new RootBeer(MainActivity.this);
 
@@ -45,19 +48,21 @@ public class MainActivity extends AppCompatActivity {
     private Toast mToast;
 
     private boolean isFloatingWindowShown = false;
+    private boolean isTrackerServiceRunning = false;
     private boolean isRootAvailable = false;
 
     // Custom Widget
     private moe.kmou424.WorldFlipper.Helper.Widget.ProgressDialog mProgressDialog;
+    private WFPanel mWFPanel;
 
     private Intent mFloatingWindowServiceIntent;
-
-    protected TesseractOCR mTesseractOCR;
+    private Intent mTrackerServiceIntent;
 
     void initHandler() {
-        mHandler = new Handler(getMainLooper()) {
+        mHandler = new Handler(Looper.getMainLooper()) {
             @Override
             public void handleMessage(@NonNull Message msg) {
+                super.handleMessage(msg);
                 switch (Math.abs(msg.what)) {
                     case MOVE_TASK_TO_BACK:
                         moveTaskToBack(true);
@@ -69,10 +74,6 @@ public class MainActivity extends AppCompatActivity {
                         mToast.setText(toastHandlerMsg.getToastMessage());
                         mToast.setDuration(toastHandlerMsg.mDuration);
                         mToast.show();
-                        break;
-                    case PUSH_TESS_OCR:
-                        TesseractOCRHandlerMsg tesseractOCRHandlerMsg = new Constructor<>((TesseractOCRHandlerMsg) msg.obj).make();
-                        mTesseractOCR = tesseractOCRHandlerMsg.getTesseractOCR();
                         break;
                     case SHOW_PROGRESS_DIALOG:
                         if (msg.what == HIDE_PROGRESS_DIALOG) {
@@ -87,13 +88,38 @@ public class MainActivity extends AppCompatActivity {
                     case SHOW_FLOATING_WINDOW:
                         if (msg.what == SHOW_FLOATING_WINDOW && !isFloatingWindowShown) {
                             startService(mFloatingWindowServiceIntent);
+                            mFloatingStatus.setText(getString(R.string.status_shown));
+                            mFloatingSwitch.setText(getString(R.string.hide_floating));
                             isFloatingWindowShown = true;
                         }
                         if (msg.what == HIDE_FLOATING_WINDOW && isFloatingWindowShown) {
                             stopService(mFloatingWindowServiceIntent);
+                            mFloatingStatus.setText(getString(R.string.status_hidden));
+                            mFloatingSwitch.setText(getString(R.string.show_floating));
                             isFloatingWindowShown = false;
                         }
                         break;
+                    case SHOW_WF_PANEL:
+                        if (msg.what == SHOW_WF_PANEL) {
+                            mWFPanel = new WFPanel(MainActivity.this);
+                            mWFPanel.show();
+                        } else {
+                            mWFPanel.hide();
+                            mWFPanel = null;
+                        }
+                        break;
+                    case START_TRACKER_SERVICE:
+                        if (msg.what == START_TRACKER_SERVICE) {
+                            if (isTrackerServiceRunning) stopService(mTrackerServiceIntent);
+                            startService(mTrackerServiceIntent);
+                            isTrackerServiceRunning = true;
+                        }
+                        if (msg.what == STOP_TRACKER_SERVICE) {
+                            if (isTrackerServiceRunning) {
+                                stopService(mTrackerServiceIntent);
+                                isTrackerServiceRunning = false;
+                            }
+                        }
                 }
                 System.gc();
             }
@@ -101,6 +127,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     void initObjects() {
+        mSharedPreferences = getSharedPreferences(Global.SHARED_PREFERENCES_NAME, MODE_PRIVATE);
+
         mRootStatus = findViewById(R.id.root_status);
         mRootLib = findViewById(R.id.root_lib);
         mRootAccess = findViewById(R.id.root_access);
@@ -109,26 +137,27 @@ public class MainActivity extends AppCompatActivity {
         mToast = Toast.makeText(MainActivity.this, null, Toast.LENGTH_LONG);
 
         mFloatingWindowServiceIntent = new Intent(MainActivity.this, FloatingWindowService.class);
+        mTrackerServiceIntent = new Intent(MainActivity.this, TrackerService.class);
     }
 
     void initRoot() {
         if (mRootBeer.isRooted()) {
-            mRootStatus.setText(String.format("%s%s", getString(R.string.root_status_text), getString(R.string.yes)));
-            if (mRootBeer.checkForMagiskBinary())
-                mRootLib.setText(String.format("%s%s", getString(R.string.root_lib_text), getString(R.string.root_lib_magisk_su)));
+            mRootStatus.setText(String.format("%s %s", getString(R.string.root_status_text), getString(R.string.yes)));
             if (mRootBeer.checkForSuBinary())
-                mRootLib.setText(String.format("%s%s", getString(R.string.root_lib_text), getString(R.string.root_lib_super_su)));
+                mRootLib.setText(String.format("%s %s", getString(R.string.root_lib_text), getString(R.string.root_lib_super_su)));
+            if (mRootBeer.checkForMagiskBinary())
+                mRootLib.setText(String.format("%s %s", getString(R.string.root_lib_text), getString(R.string.root_lib_magisk_su)));
             if (!mRootBeer.checkForMagiskBinary() && !mRootBeer.checkForSuBinary())
-                mRootLib.setText(String.format("%s%s", getString(R.string.root_lib_text), getString(R.string.unknown)));
+                mRootLib.setText(String.format("%s %s", getString(R.string.root_lib_text), getString(R.string.unknown)));
         } else {
-            mRootStatus.setText(String.format("%s%s", getString(R.string.root_status_text), getString(R.string.no)));
-            mRootLib.setText(String.format("%s%s", getString(R.string.root_lib_text), getString(R.string.unknown)));
+            mRootStatus.setText(String.format("%s %s", getString(R.string.root_status_text), getString(R.string.no)));
+            mRootLib.setText(String.format("%s %s", getString(R.string.root_lib_text), getString(R.string.unknown)));
         }
         isRootAvailable = RootManager.requestRoot();
         if (isRootAvailable) {
-            mRootAccess.setText(String.format("%s%s", getString(R.string.root_access), getString(R.string.yes)));
+            mRootAccess.setText(String.format("%s %s", getString(R.string.root_access), getString(R.string.yes)));
         } else {
-            mRootAccess.setText(String.format("%s%s", getString(R.string.root_access), getString(R.string.no)));
+            mRootAccess.setText(String.format("%s %s", getString(R.string.root_access), getString(R.string.no)));
         }
     }
 
@@ -136,12 +165,8 @@ public class MainActivity extends AppCompatActivity {
         mFloatingSwitch.setOnClickListener(view -> {
             if (isRootAvailable) {
                 if (isFloatingWindowShown) {
-                    mFloatingStatus.setText(getString(R.string.status_hidden));
-                    mFloatingSwitch.setText(getString(R.string.show_floating));
                     mHandler.sendEmptyMessage(HIDE_FLOATING_WINDOW);
                 } else {
-                    mFloatingStatus.setText(getString(R.string.status_shown));
-                    mFloatingSwitch.setText(getString(R.string.hide_floating));
                     mHandler.sendEmptyMessage(SHOW_FLOATING_WINDOW);
                 }
             } else {
@@ -155,15 +180,15 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        checkPermission();
         if (!FileUtils.isDirExist(FileUtils.getExternalRoot())) FileUtils.createDir(FileUtils.getExternalRoot());
         FileUtils.deleteFile(FileUtils.getExternalRoot() + "/log.txt");
         Logger.out(Logger.INFO, getLocalClassName(), "onCreate", "Application launched");
-        checkPermission();
         initHandler();
         initObjects();
         initRoot();
         bindListeners();
-        new MainThread(MainActivity.this, mHandler).start();
+        new MainThread(MainActivity.this).start();
     }
 
     private void checkPermission() {

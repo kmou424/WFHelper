@@ -7,7 +7,7 @@ public class ToastHandlerMsg {
     public final static int LENGTH_SHORT = Toast.LENGTH_SHORT;
 
     private final String mToastMessage;
-    public int mDuration;
+    public final int mDuration;
 
     public ToastHandlerMsg(String mToastMessage, int mDuration) {
         this.mToastMessage = mToastMessage;

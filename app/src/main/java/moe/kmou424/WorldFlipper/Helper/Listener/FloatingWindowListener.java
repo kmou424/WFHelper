@@ -1,7 +1,6 @@
 package moe.kmou424.WorldFlipper.Helper.Listener;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.os.Handler;
 import android.view.MotionEvent;
 import android.view.View;
@@ -9,23 +8,19 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
-
-import moe.kmou424.WorldFlipper.Helper.Constant;
+import moe.kmou424.WorldFlipper.Helper.Constants.Global;
 import moe.kmou424.WorldFlipper.Helper.HandlerMsg.Action.ToastHandlerMsg;
 import moe.kmou424.WorldFlipper.Helper.HandlerMsg.HandlerMessage;
 import moe.kmou424.WorldFlipper.Helper.MainActivity;
 import moe.kmou424.WorldFlipper.Helper.R;
-import moe.kmou424.WorldFlipper.Helper.Tools.ScreenUtils;
+import moe.kmou424.WorldFlipper.Helper.Tools.RootUtils;
 import moe.kmou424.WorldFlipper.Helper.Widget.FloatingWindow;
-import moe.kmou424.WorldFlipper.Helper.Widget.WFPanel;
 
 public class FloatingWindowListener {
-    private final Context mContext;
     private final FloatingWindow mFloatingWindow;
     private final Handler mHandler;
 
-    public FloatingWindowListener(Context mContext, FloatingWindow mFloatingWindow) {
-        this.mContext = mContext;
+    public FloatingWindowListener(FloatingWindow mFloatingWindow) {
         this.mFloatingWindow = mFloatingWindow;
         this.mHandler = MainActivity.mHandler;
     }
@@ -53,13 +48,16 @@ public class FloatingWindowListener {
     private void bindFloatingSubButton() {
         mFloatingWindow.mRootView.findViewById(R.id.floatingSubButton1)
                 .setOnClickListener(view -> mHandler.sendMessage(new HandlerMessage<>().make(
-                        new ToastHandlerMsg("Screenshot was save at " + ScreenUtils.takeScreenShot(), ToastHandlerMsg.LENGTH_LONG),
+                        new ToastHandlerMsg("Screenshot was save at " + RootUtils.takeScreenShot(), ToastHandlerMsg.LENGTH_LONG),
                         HandlerMessage.SHOW_TOAST)
                 ));
         mFloatingWindow.mRootView.findViewById(R.id.floatingSubButton2)
-                .setOnClickListener(view -> new WFPanel(mContext).show());
+                .setOnClickListener(view -> MainActivity.mHandler.sendEmptyMessage(HandlerMessage.SHOW_WF_PANEL));
         mFloatingWindow.mRootView.findViewById(R.id.floatingSubButton3)
-                .setOnClickListener(view -> mHandler.sendMessage(new HandlerMessage<>().make(null, HandlerMessage.HIDE_FLOATING_WINDOW)));
+                .setOnClickListener(view -> {
+                    mHandler.sendEmptyMessage(HandlerMessage.STOP_TRACKER_SERVICE);
+                    mHandler.sendEmptyMessage(HandlerMessage.HIDE_FLOATING_WINDOW);
+                });
     }
 }
 
@@ -107,7 +105,7 @@ class FloatingOnTouchListener implements View.OnTouchListener {
                 mLayoutParams.x = (x >= mWindowManager.getDefaultDisplay().getWidth() / 2 ? x_right : x_left);
                 x = mLayoutParams.x;
                 mWindowManager.updateViewLayout(mView, mLayoutParams);
-                if (mDiffX + mDiffY > Constant.MOVE_FLOATING_WINDOW_SENSITIVITY) return true;
+                if (mDiffX + mDiffY > Global.MOVE_FLOATING_WINDOW_SENSITIVITY) return true;
             default:
                 break;
         }
