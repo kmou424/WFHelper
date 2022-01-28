@@ -11,7 +11,7 @@ public class CheckPoints {
     );
     public final static String BELL_DIALOG_TITLE = "关卡信息";
     public final static ColorInfo PREPARE_AS_GUEST_CHECKBOX_INACTIVATE_COLOR = new ColorInfo(
-            new RgbInfo(0xde, 0xde, 0xde), new RgbInfo(0xe5, 0xe5, 0xe5)
+            new RgbInfo(0xde, 0xde, 0xde), new RgbInfo(0xe9, 0xe9, 0xe9)
     );
     public final static String BATTLE_FAILED_RESURRECTION_BUTTON_TITLE = "续战";
     public final static String BOTTOM_CONTINUE_BUTTON_TITLE = "继续";
