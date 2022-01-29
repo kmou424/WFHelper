@@ -101,6 +101,25 @@ public class WFPanel {
 
     // Private: Get a custom view
     private MaterialCardView getSubView1() {
+        // Widget1: Bell Tracker Switch
+        SwitchMaterial mBellTrackerSwitch = new SwitchMaterial(mContext);
+        mBellTrackerSwitch.setText(R.string.wf_bell_tracker_switch_text);
+        mBellTrackerSwitch.setChecked(MainActivity.mSharedPreferences.getBoolean(SharedPreferencesConfigs.BELL_TRACKER_SWITCH, false));
+        mBellTrackerSwitch.setId(R.id.wf_bell_tracker_switch);
+
+        // SubView: Root -> Sub
+        LinearLayout mSubViewChildView = getLinearLayoutContainer(20, 12, LinearLayout.VERTICAL);
+        mSubViewChildView.addView(mBellTrackerSwitch);
+
+        // SubView: Root View
+        MaterialCardView mSubView = getMaterialCardContainer();
+        mSubView.addView(mSubViewChildView);
+
+        return mSubView;
+    }
+
+    // Private: Get a custom view
+    private MaterialCardView getSubView2() {
         // Sub1: Widget1: Title
         TextView mSub1Title = new TextView(mContext);
         mSub1Title.setText(R.string.wf_boss_level_title);
@@ -150,25 +169,6 @@ public class WFPanel {
         // SubView: Root View
         MaterialCardView mSubView = getMaterialCardContainer();
         mSubView.addView(mSubViewChildRoot);
-
-        return mSubView;
-    }
-
-    // Private: Get a custom view
-    private MaterialCardView getSubView2() {
-        // Widget1: Bell Tracker Switch
-        SwitchMaterial mBellTrackerSwitch = new SwitchMaterial(mContext);
-        mBellTrackerSwitch.setText(R.string.wf_bell_tracker_switch_text);
-        mBellTrackerSwitch.setChecked(MainActivity.mSharedPreferences.getBoolean(SharedPreferencesConfigs.BELL_TRACKER_SWITCH, false));
-        mBellTrackerSwitch.setId(R.id.wf_bell_tracker_switch);
-
-        // SubView: Root -> Sub
-        LinearLayout mSubViewChildView = getLinearLayoutContainer(20, 12, LinearLayout.VERTICAL);
-        mSubViewChildView.addView(mBellTrackerSwitch);
-
-        // SubView: Root View
-        MaterialCardView mSubView = getMaterialCardContainer();
-        mSubView.addView(mSubViewChildView);
 
         return mSubView;
     }
