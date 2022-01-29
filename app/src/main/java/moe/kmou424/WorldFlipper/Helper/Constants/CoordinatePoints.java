@@ -6,6 +6,8 @@ import moe.kmou424.WorldFlipper.Helper.Info.BitmapInfo;
 
 public class CoordinatePoints {
     // Pixel Dot
+    // 主页: 关闭公告按钮位置
+    public final static Point NOTICE_CLOSE_BUTTON = new Point(356, 1177);
     // 准备界面: 左框位置
     public final static Point ROOM_PREPARE_STATUS_LEFT = new Point(55, 298);
     // 准备界面: 中框位置
@@ -26,13 +28,15 @@ public class CoordinatePoints {
     // 结算界面: 离开房间按钮位置
     public final static Point BOTTOM_QUIT_ROOM = new Point(215, 1200);
     // 任意界面(对话框): 进入房间异常或队伍已解散时 确认按钮位置
-    public final static Point ENTER_ROOM_FAILED = new Point(363, 802);
+    public final static Point DIALOG_BUTTON = new Point(363, 802);
     // Bottom navigation
     // 底部导航栏: 主城按钮位置
     public final static Point BOTTOM_NAV_HOME_COLOR = new Point(220, 1260);
 
     // Bitmap Area
     public final static BitmapInfo LOADING_TEXT = new BitmapInfo(511, 1195, 208, 47);
+    // 对话框内容
+    public final static BitmapInfo DIALOG_MESSAGE = new BitmapInfo(95, 436, 530, 285);
 
     public final static BitmapInfo BELL_DIALOG_TITLE = new BitmapInfo(295, 51, 126, 38);
     public final static BitmapInfo BATTLE_FAILED_RESURRECTION_BUTTON_TITLE = new BitmapInfo(261, 1034, 194, 60);

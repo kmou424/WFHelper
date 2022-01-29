@@ -16,9 +16,10 @@ public class CheckPoints {
     public final static String BATTLE_FAILED_RESURRECTION_BUTTON_TITLE = "续战";
     public final static String BOTTOM_CONTINUE_BUTTON_TITLE = "继续";
     public final static String BOTTOM_QUIT_ROOM_BUTTON_TITLE = "离开房间";
-    public final static ColorInfo ROOM_ENTER_FAILED_COLOR = new ColorInfo(
+    public final static ColorInfo DIALOG_BUTTON_COLOR = new ColorInfo(
             new RgbInfo(0x29, 0xbd, 0xb2), new RgbInfo(0x31, 0xc9, 0xbe)
     );
+    public final static String DIALOG_MESSAGE_UPDATE_TIME = "日期变了";
 
     // Bottom navigation
     public final static ColorInfo BOTTOM_NAV_HOME_INACTIVATE_COLOR = new ColorInfo(

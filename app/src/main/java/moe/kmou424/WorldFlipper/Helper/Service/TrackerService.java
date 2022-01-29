@@ -94,93 +94,109 @@ public class TrackerService extends Service {
             @Override
             public void handleMessage(@NonNull Message msg) {
                 super.handleMessage(msg);
-                if (DEBUG) Log.d(LOG_TAG, "NowTask: " + TASKS.get(msg.what));
-                Logger.out(Logger.INFO, LOG_TAG, "NowTask", TASKS.get(msg.what));
-                switch (msg.what) {
-                    case GO_CHECK_BITMAP:
-                        if (checkRoomDialog()) break;
-                        if (isBellTrackerEnabled && BitmapUtils.getHexRGB(mBitmap, CoordinatePoints.BELL_POINT_IN)
-                                > BitmapUtils.getHexRGB(mBitmap, CoordinatePoints.BELL_POINT_OUT)) {
-                            SimulateTouch.click(CoordinatePoints.BELL_POINT_IN);
-                            mNowTask = GO_BELL;
-                        }
-                        break;
-                    case GO_BELL:
-                        if (checkRoomDialog() || checkIsHomePage()) break;
-                        if (!mTesseractOCR.getTextFromBitmap(BitmapUtils.crop(mBitmap, CoordinatePoints.BELL_DIALOG_TITLE)).contains(CheckPoints.BELL_DIALOG_TITLE))
-                            break;
-                        SimulateTouch.click(CoordinatePoints.BELL_JOIN);
-                        mNowTask = GO_PREPARE_AS_GUEST;
-                        break;
-                    case GO_PREPARE_AS_GUEST:
-                        if (checkRoomDialog() || checkIsHomePage()) break;
-                        if (isEnteredRoom) {
-                            if (mTesseractOCR.getTextFromBitmap(BitmapUtils.crop(mBitmap, CoordinatePoints.LOADING_TEXT)).contains(CheckPoints.LOADING_TEXT)) {
-                                mNowTask = GO_WAITING_FOR_FINISH;
-                                break;
-                            }
-                        }
-                        if (CheckPoints.PREPARE_AS_GUEST_CHECKBOX_INACTIVATE_COLOR.check(BitmapUtils.getPixelRgbInfo(mBitmap, CoordinatePoints.PREPARE_AS_GUEST_CHECKBOX))) {
-                            isEnteredRoom = true;
-                            if (isWaitOthersReadyEnabled) {
-                                int cnt = 0;
-                                if (CheckPoints.ROOM_PREPARE_READY_COLOR.check(BitmapUtils.getPixelRgbInfo(mBitmap, CoordinatePoints.ROOM_PREPARE_STATUS_LEFT))) cnt++;
-                                if (CheckPoints.ROOM_PREPARE_READY_COLOR.check(BitmapUtils.getPixelRgbInfo(mBitmap, CoordinatePoints.ROOM_PREPARE_STATUS_CENTER))) cnt++;
-                                if (CheckPoints.ROOM_PREPARE_READY_COLOR.check(BitmapUtils.getPixelRgbInfo(mBitmap, CoordinatePoints.ROOM_PREPARE_STATUS_RIGHT))) cnt++;
-                                if (cnt < 2) {
-                                    break;
-                                }
-                            }
-                            SimulateTouch.click(CoordinatePoints.PREPARE_AS_GUEST_CHECKBOX);
-                            mNowTask = GO_WAITING_FOR_FINISH;
-                        }
-                        break;
-                    case GO_WAITING_FOR_FINISH:
-                        if (isEnteredRoom) isEnteredRoom = false;
-                        if (checkRoomDialog() || checkIsHomePage()) break;
-                        // 战败判定
-                        if (mTesseractOCR.getTextFromBitmap(BitmapUtils.cropWhiteFont(mBitmap, CoordinatePoints.BATTLE_FAILED_RESURRECTION_BUTTON_TITLE)).contains(CheckPoints.BATTLE_FAILED_RESURRECTION_BUTTON_TITLE)) {
-                            mNowTask = GO_MAIN_PAGE;
-                            break;
-                        }
-                        // 继续按钮判定
-                        if (mTesseractOCR.getTextFromBitmap(BitmapUtils.cropWhiteFont(mBitmap, CoordinatePoints.BOTTOM_CONTINUE_BUTTON_TITLE)).contains(CheckPoints.BOTTOM_CONTINUE_BUTTON_TITLE)) {
-                            SimulateTouch.click(CoordinatePoints.BOTTOM_CONTINUE);
-                            isContinueClicked = true;
-                        }
-                        // 离开房间按钮判定
-                        if (isContinueClicked) {
-                            if (mTesseractOCR.getTextFromBitmap(BitmapUtils.cropWhiteFont(mBitmap, CoordinatePoints.BOTTOM_QUIT_ROOM_BUTTON_TITLE)).contains(CheckPoints.BOTTOM_QUIT_ROOM_BUTTON_TITLE)) {
-                                SimulateTouch.click(CoordinatePoints.BOTTOM_QUIT_ROOM);
-                                mNowTask = GO_MAIN_PAGE;
-                                isContinueClicked = false;
-                                break;
-                            }
-                            // 无脑暴力点击，解决所有特殊事件XD
-                            SimulateTouch.click(CoordinatePoints.BOTTOM_CONTINUE);
-                        }
-                        break;
-                    case GO_MAIN_PAGE:
-                        if (!checkIsHomePage()) {
-                            if (CheckPoints.BOTTOM_NAV_HOME_INACTIVATE_COLOR.check(BitmapUtils.getPixelRgbInfo(mBitmap, CoordinatePoints.BOTTOM_NAV_HOME_COLOR))) {
-                                SimulateTouch.click(CoordinatePoints.BOTTOM_NAV_HOME_COLOR);
-                                mNowTask = NO_TASK;
-                            }
-                        }
-                        break;
-                }
+                mainChecker(msg);
             }
         };
     }
 
-    private boolean checkRoomDialog() {
-        if (DEBUG) Log.d(LOG_TAG, "checkRoomDialog");
-        if (CheckPoints.ROOM_ENTER_FAILED_COLOR.check(BitmapUtils.getPixelRgbInfo(mBitmap, CoordinatePoints.ENTER_ROOM_FAILED))) {
-            SimulateTouch.click(CoordinatePoints.ENTER_ROOM_FAILED);
+    private void mainChecker(@NonNull Message msg) {
+        if (DEBUG) Log.d(LOG_TAG, "NowTask: " + TASKS.get(msg.what));
+        Logger.out(Logger.INFO, LOG_TAG, "NowTask", TASKS.get(msg.what));
+        // 检查对话框，有对话框的话就给他点了
+        if (checkDialog()) {
             mNowTask = NO_TASK;
-            return true;
+            SimulateTouch.click(CoordinatePoints.DIALOG_BUTTON);
+            // 判断对话框内容是否为日期变了
+            if (mTesseractOCR.getTextFromBitmap(BitmapUtils.crop(mBitmap, CoordinatePoints.DIALOG_MESSAGE)).contains(CheckPoints.DIALOG_MESSAGE_UPDATE_TIME)) {
+                // 将任务设置为前往重新登录
+                mNowTask = GO_RE_LOGIN;
+                // 将本次Handler任务设置为重新登录
+                msg.what = GO_RE_LOGIN;
+            }
         }
-        return false;
+        switch (msg.what) {
+            case GO_RE_LOGIN:
+                if (!checkIsHomePage()) {
+                    // 点击公告关闭按钮位置来登录&跳过签到/公告
+                    SimulateTouch.click(CoordinatePoints.NOTICE_CLOSE_BUTTON);
+                }
+                break;
+            case GO_CHECK_BITMAP:
+                if (isBellTrackerEnabled && BitmapUtils.getHexRGB(mBitmap, CoordinatePoints.BELL_POINT_IN)
+                        > BitmapUtils.getHexRGB(mBitmap, CoordinatePoints.BELL_POINT_OUT)) {
+                    SimulateTouch.click(CoordinatePoints.BELL_POINT_IN);
+                    mNowTask = GO_BELL;
+                }
+                break;
+            case GO_BELL:
+                if (checkIsHomePage()) break;
+                if (!mTesseractOCR.getTextFromBitmap(BitmapUtils.crop(mBitmap, CoordinatePoints.BELL_DIALOG_TITLE)).contains(CheckPoints.BELL_DIALOG_TITLE))
+                    break;
+                SimulateTouch.click(CoordinatePoints.BELL_JOIN);
+                mNowTask = GO_PREPARE_AS_GUEST;
+                break;
+            case GO_PREPARE_AS_GUEST:
+                if (checkIsHomePage()) break;
+                if (isEnteredRoom) {
+                    if (mTesseractOCR.getTextFromBitmap(BitmapUtils.crop(mBitmap, CoordinatePoints.LOADING_TEXT)).contains(CheckPoints.LOADING_TEXT)) {
+                        mNowTask = GO_WAITING_FOR_FINISH;
+                        break;
+                    }
+                }
+                if (CheckPoints.PREPARE_AS_GUEST_CHECKBOX_INACTIVATE_COLOR.check(BitmapUtils.getPixelRgbInfo(mBitmap, CoordinatePoints.PREPARE_AS_GUEST_CHECKBOX))) {
+                    isEnteredRoom = true;
+                    if (isWaitOthersReadyEnabled) {
+                        int cnt = 0;
+                        if (CheckPoints.ROOM_PREPARE_READY_COLOR.check(BitmapUtils.getPixelRgbInfo(mBitmap, CoordinatePoints.ROOM_PREPARE_STATUS_LEFT))) cnt++;
+                        if (CheckPoints.ROOM_PREPARE_READY_COLOR.check(BitmapUtils.getPixelRgbInfo(mBitmap, CoordinatePoints.ROOM_PREPARE_STATUS_CENTER))) cnt++;
+                        if (CheckPoints.ROOM_PREPARE_READY_COLOR.check(BitmapUtils.getPixelRgbInfo(mBitmap, CoordinatePoints.ROOM_PREPARE_STATUS_RIGHT))) cnt++;
+                        if (cnt < 2) {
+                            break;
+                        }
+                    }
+                    SimulateTouch.click(CoordinatePoints.PREPARE_AS_GUEST_CHECKBOX);
+                    mNowTask = GO_WAITING_FOR_FINISH;
+                }
+                break;
+            case GO_WAITING_FOR_FINISH:
+                if (isEnteredRoom) isEnteredRoom = false;
+                if (checkDialog() || checkIsHomePage()) break;
+                // 战败判定
+                if (mTesseractOCR.getTextFromBitmap(BitmapUtils.cropWhiteFont(mBitmap, CoordinatePoints.BATTLE_FAILED_RESURRECTION_BUTTON_TITLE)).contains(CheckPoints.BATTLE_FAILED_RESURRECTION_BUTTON_TITLE)) {
+                    mNowTask = GO_MAIN_PAGE;
+                    break;
+                }
+                // 继续按钮判定
+                if (mTesseractOCR.getTextFromBitmap(BitmapUtils.cropWhiteFont(mBitmap, CoordinatePoints.BOTTOM_CONTINUE_BUTTON_TITLE)).contains(CheckPoints.BOTTOM_CONTINUE_BUTTON_TITLE)) {
+                    SimulateTouch.click(CoordinatePoints.BOTTOM_CONTINUE);
+                    isContinueClicked = true;
+                }
+                // 离开房间按钮判定
+                if (isContinueClicked) {
+                    if (mTesseractOCR.getTextFromBitmap(BitmapUtils.cropWhiteFont(mBitmap, CoordinatePoints.BOTTOM_QUIT_ROOM_BUTTON_TITLE)).contains(CheckPoints.BOTTOM_QUIT_ROOM_BUTTON_TITLE)) {
+                        SimulateTouch.click(CoordinatePoints.BOTTOM_QUIT_ROOM);
+                        mNowTask = GO_MAIN_PAGE;
+                        isContinueClicked = false;
+                        break;
+                    }
+                    // 无脑暴力点击，解决所有特殊事件XD
+                    SimulateTouch.click(CoordinatePoints.BOTTOM_CONTINUE);
+                }
+                break;
+            case GO_MAIN_PAGE:
+                if (!checkIsHomePage()) {
+                    if (CheckPoints.BOTTOM_NAV_HOME_INACTIVATE_COLOR.check(BitmapUtils.getPixelRgbInfo(mBitmap, CoordinatePoints.BOTTOM_NAV_HOME_COLOR))) {
+                        SimulateTouch.click(CoordinatePoints.BOTTOM_NAV_HOME_COLOR);
+                        mNowTask = NO_TASK;
+                    }
+                }
+                break;
+        }
+    }
+
+    private boolean checkDialog() {
+        if (DEBUG) Log.d(LOG_TAG, "checkDialog");
+        return CheckPoints.DIALOG_BUTTON_COLOR.check(BitmapUtils.getPixelRgbInfo(mBitmap, CoordinatePoints.DIALOG_BUTTON));
     }
 
     private boolean checkIsHomePage() {

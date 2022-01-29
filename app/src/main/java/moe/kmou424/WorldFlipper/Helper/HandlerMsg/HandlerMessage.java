@@ -20,11 +20,12 @@ public class HandlerMessage<T> {
     public final static int HIDE_WF_PANEL = -SHOW_WF_PANEL;
 
     // Tracker Action 301+
-    public final static int GO_CHECK_BITMAP = 301;
-    public final static int GO_BELL = 302;
-    public final static int GO_PREPARE_AS_GUEST = 303;
-    public final static int GO_WAITING_FOR_FINISH = 304;
-    public final static int GO_MAIN_PAGE = 305;
+    public final static int GO_RE_LOGIN = 301;
+    public final static int GO_CHECK_BITMAP = 302;
+    public final static int GO_BELL = 303;
+    public final static int GO_PREPARE_AS_GUEST = 304;
+    public final static int GO_WAITING_FOR_FINISH = 305;
+    public final static int GO_MAIN_PAGE = 306;
 
     /*
     * Convert obj to handler message
