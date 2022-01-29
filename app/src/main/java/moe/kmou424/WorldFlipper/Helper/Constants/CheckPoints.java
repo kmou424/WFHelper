@@ -6,6 +6,13 @@ import moe.kmou424.WorldFlipper.Helper.Info.RgbInfo;
 public class CheckPoints {
     public final static String LOADING_TEXT = "请耐心等待";
 
+    // Boss levels
+    public final static String BOSS_LEVEL_PRIMARY = "初级";
+    public final static String BOSS_LEVEL_MIDDLE = "中级";
+    public final static String BOSS_LEVEL_HIGH = "高级";
+    public final static String BOSS_LEVEL_HIGH_PLUS = "高级+";
+    public final static String BOSS_LEVEL_SUPER = "超级";
+
     public final static ColorInfo ROOM_PREPARE_READY_COLOR = new ColorInfo(
             new RgbInfo(0xff, 0x9a, 0x16), new RgbInfo(0xff, 0xa9, 0x26)
     );

@@ -15,6 +15,8 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.annotation.IdRes;
+import androidx.annotation.StringRes;
 import androidx.core.widget.NestedScrollView;
 
 import com.google.android.material.card.MaterialCardView;
@@ -86,7 +88,7 @@ public class WFPanel {
         mNoticeContent.setText(String.format("%s", mContext.getString(R.string.wf_notice_content)));
 
         // SubView: Root -> Sub
-        LinearLayout mSubViewChildView = getLinearLayoutContainer(20);
+        LinearLayout mSubViewChildView = getLinearLayoutContainer(20, 12, LinearLayout.VERTICAL);
         mSubViewChildView.addView(mNoticeHeader);
         mSubViewChildView.addView(mNoticeContent);
 
@@ -99,19 +101,55 @@ public class WFPanel {
 
     // Private: Get a custom view
     private MaterialCardView getSubView1() {
-        // Widget1: Wait for others ready
-        MaterialCheckBox mWaitOthersReadyCheckBox = new MaterialCheckBox(mContext);
-        mWaitOthersReadyCheckBox.setText(R.string.wf_wait_for_others_ready_checkbox_text);
-        mWaitOthersReadyCheckBox.setChecked(MainActivity.mSharedPreferences.getBoolean(SharedPreferencesConfigs.WAIT_OTHERS_READY_CHECKBOX, false));
-        mWaitOthersReadyCheckBox.setId(R.id.wf_wait_others_ready_checkbox);
+        // Sub1: Widget1: Title
+        TextView mSub1Title = new TextView(mContext);
+        mSub1Title.setText(R.string.wf_boss_level_title);
+        mSub1Title.setTextSize(18);
+        mSub1Title.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
+        mSub1Title.setGravity(Gravity.CENTER_HORIZONTAL);
+        // Sub1: Widget2: Boss level selection: primary
+        MaterialCheckBox mBossLevelPrimaryCheckBox = getMaterialCheckBox(R.string.wf_boss_level_primary, R.id.wf_boss_level_primary);
+        mBossLevelPrimaryCheckBox.setChecked(MainActivity.mSharedPreferences.getBoolean(SharedPreferencesConfigs.BOSS_LEVEL_PRIMARY, true));
+        // Sub1: Widget3: Boss level selection: middle
+        MaterialCheckBox mBossLevelMiddleCheckBox = getMaterialCheckBox(R.string.wf_boss_level_middle, R.id.wf_boss_level_middle);
+        mBossLevelMiddleCheckBox.setChecked(MainActivity.mSharedPreferences.getBoolean(SharedPreferencesConfigs.BOSS_LEVEL_MIDDLE, true));
+        // Sub1: Widget4: Boss level selection: high
+        MaterialCheckBox mBossLevelHighCheckBox = getMaterialCheckBox(R.string.wf_boss_level_high, R.id.wf_boss_level_high);
+        mBossLevelHighCheckBox.setChecked(MainActivity.mSharedPreferences.getBoolean(SharedPreferencesConfigs.BOSS_LEVEL_HIGH, true));
+        // Sub1: Widget5: Boss level selection: high plus
+        MaterialCheckBox mBossLevelHighPlusCheckBox = getMaterialCheckBox(R.string.wf_boss_level_high_plus, R.id.wf_boss_level_high_plus);
+        mBossLevelHighPlusCheckBox.setChecked(MainActivity.mSharedPreferences.getBoolean(SharedPreferencesConfigs.BOSS_LEVEL_HIGH_PLUS, true));
+        // Sub1: Widget6: Boss level selection: super
+        MaterialCheckBox mBossLevelSuperCheckBox = getMaterialCheckBox(R.string.wf_boss_level_super, R.id.wf_boss_level_super);
+        mBossLevelSuperCheckBox.setChecked(MainActivity.mSharedPreferences.getBoolean(SharedPreferencesConfigs.BOSS_LEVEL_SUPER, true));
 
-        // SubView: Root -> Sub
-        LinearLayout mSubViewChildView = getLinearLayoutContainer(12);
-        mSubViewChildView.addView(mWaitOthersReadyCheckBox);
+        // SubView: Root -> Sub -> Sub1
+        LinearLayout mSubViewChildView1 = getLinearLayoutContainer(0, 6, LinearLayout.VERTICAL);
+        mSubViewChildView1.setBackgroundResource(R.drawable.corner_background);
+        mSubViewChildView1.addView(mSub1Title);
+        mSubViewChildView1.addView(mBossLevelPrimaryCheckBox);
+        mSubViewChildView1.addView(mBossLevelMiddleCheckBox);
+        mSubViewChildView1.addView(mBossLevelHighCheckBox);
+        mSubViewChildView1.addView(mBossLevelHighPlusCheckBox);
+        mSubViewChildView1.addView(mBossLevelSuperCheckBox);
+
+        // Sub2: Widget1: Wait for others ready
+        MaterialCheckBox mWaitOthersReadyCheckBox = getMaterialCheckBox(R.string.wf_wait_for_others_ready_checkbox_text, R.id.wf_wait_others_ready_checkbox);
+        mWaitOthersReadyCheckBox.setChecked(MainActivity.mSharedPreferences.getBoolean(SharedPreferencesConfigs.WAIT_OTHERS_READY_CHECKBOX, false));
+
+        // SubView: Root -> Sub -> Sub2
+        LinearLayout mSubViewChildView2 = getLinearLayoutContainer(0, 6, LinearLayout.VERTICAL);
+        mSubViewChildView2.setBackgroundResource(R.drawable.corner_background);
+        mSubViewChildView2.addView(mWaitOthersReadyCheckBox);
+
+        //Root -> Sub
+        LinearLayout mSubViewChildRoot = getLinearLayoutContainer(20, 12, LinearLayout.VERTICAL);
+        mSubViewChildRoot.addView(mSubViewChildView1);
+        mSubViewChildRoot.addView(mSubViewChildView2);
 
         // SubView: Root View
         MaterialCardView mSubView = getMaterialCardContainer();
-        mSubView.addView(mSubViewChildView);
+        mSubView.addView(mSubViewChildRoot);
 
         return mSubView;
     }
@@ -125,7 +163,7 @@ public class WFPanel {
         mBellTrackerSwitch.setId(R.id.wf_bell_tracker_switch);
 
         // SubView: Root -> Sub
-        LinearLayout mSubViewChildView = getLinearLayoutContainer(12);
+        LinearLayout mSubViewChildView = getLinearLayoutContainer(20, 12, LinearLayout.VERTICAL);
         mSubViewChildView.addView(mBellTrackerSwitch);
 
         // SubView: Root View
@@ -135,16 +173,25 @@ public class WFPanel {
         return mSubView;
     }
 
+    private MaterialCheckBox getMaterialCheckBox(@StringRes int mText, @IdRes int mId) {
+        MaterialCheckBox mMaterialCheckBox = new MaterialCheckBox(mContext);
+        mMaterialCheckBox.setText(mText);
+        mMaterialCheckBox.setId(mId);
+        return mMaterialCheckBox;
+    }
+
     // Common get a container: LinearLayout
-    private LinearLayout getLinearLayoutContainer(int leftAndRightMargin) {
+    private LinearLayout getLinearLayoutContainer(int leftAndRightMargin, int topAndBottomMargin, int mOrientation) {
         LinearLayout.LayoutParams mLinearLayoutContainerParams = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT
         );
         mLinearLayoutContainerParams.leftMargin = leftAndRightMargin;
         mLinearLayoutContainerParams.rightMargin = leftAndRightMargin;
+        mLinearLayoutContainerParams.topMargin = topAndBottomMargin;
+        mLinearLayoutContainerParams.bottomMargin = topAndBottomMargin;
         LinearLayout mLinearLayoutContainer = new LinearLayout(mContext);
         mLinearLayoutContainer.setLayoutParams(mLinearLayoutContainerParams);
-        mLinearLayoutContainer.setOrientation(LinearLayout.VERTICAL);
+        mLinearLayoutContainer.setOrientation(mOrientation);
         return mLinearLayoutContainer;
     }
 
@@ -177,6 +224,11 @@ class StartTrackerListener implements DialogInterface.OnClickListener {
     public void onClick(DialogInterface dialogInterface, int i) {
         // Bell Tracker
         MainActivity.mSharedPreferences.edit()
+                .putBoolean(SharedPreferencesConfigs.BOSS_LEVEL_PRIMARY, ((MaterialCheckBox)WFPanel.mAlertDialog.findViewById(R.id.wf_boss_level_primary)).isChecked())
+                .putBoolean(SharedPreferencesConfigs.BOSS_LEVEL_MIDDLE, ((MaterialCheckBox)WFPanel.mAlertDialog.findViewById(R.id.wf_boss_level_middle)).isChecked())
+                .putBoolean(SharedPreferencesConfigs.BOSS_LEVEL_HIGH, ((MaterialCheckBox)WFPanel.mAlertDialog.findViewById(R.id.wf_boss_level_high)).isChecked())
+                .putBoolean(SharedPreferencesConfigs.BOSS_LEVEL_HIGH_PLUS, ((MaterialCheckBox)WFPanel.mAlertDialog.findViewById(R.id.wf_boss_level_high_plus)).isChecked())
+                .putBoolean(SharedPreferencesConfigs.BOSS_LEVEL_SUPER, ((MaterialCheckBox)WFPanel.mAlertDialog.findViewById(R.id.wf_boss_level_super)).isChecked())
                 .putBoolean(SharedPreferencesConfigs.WAIT_OTHERS_READY_CHECKBOX, ((MaterialCheckBox)WFPanel.mAlertDialog.findViewById(R.id.wf_wait_others_ready_checkbox)).isChecked())
                 .putBoolean(SharedPreferencesConfigs.BELL_TRACKER_SWITCH, ((SwitchMaterial)WFPanel.mAlertDialog.findViewById(R.id.wf_bell_tracker_switch)).isChecked())
         .apply();

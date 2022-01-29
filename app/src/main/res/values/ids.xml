@@ -7,6 +7,11 @@
     <item name="floatingSubButton2" type="id"/>
     <item name="floatingSubButton3" type="id"/>
 
+    <item name="wf_boss_level_primary" type="id"/>
+    <item name="wf_boss_level_middle" type="id"/>
+    <item name="wf_boss_level_high" type="id"/>
+    <item name="wf_boss_level_high_plus" type="id"/>
+    <item name="wf_boss_level_super" type="id"/>
     <item name="wf_wait_others_ready_checkbox" type="id"/>
     <item name="wf_bell_tracker_switch" type="id"/>
 </resources>

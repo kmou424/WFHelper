@@ -46,6 +46,13 @@ public class TrackerService extends Service {
     private Thread mScreenShotThread;
     private int mNowTask = NO_TASK;
 
+    // Boss Level
+    private boolean isBossLevelPrimaryEnabled;
+    private boolean isBossLevelMiddleEnabled;
+    private boolean isBossLevelHighEnabled;
+    private boolean isBossLevelHighPlusEnabled;
+    private boolean isBossLevelSuperEnabled;
+
     private boolean isWaitOthersReadyEnabled;
     private boolean isBellTrackerEnabled;
 
@@ -85,6 +92,11 @@ public class TrackerService extends Service {
     }
 
     void initConfig() {
+        isBossLevelPrimaryEnabled = mSharedPreferences.getBoolean(SharedPreferencesConfigs.BOSS_LEVEL_PRIMARY, false);
+        isBossLevelMiddleEnabled = mSharedPreferences.getBoolean(SharedPreferencesConfigs.BOSS_LEVEL_MIDDLE, false);
+        isBossLevelHighEnabled = mSharedPreferences.getBoolean(SharedPreferencesConfigs.BOSS_LEVEL_HIGH, false);
+        isBossLevelHighPlusEnabled = mSharedPreferences.getBoolean(SharedPreferencesConfigs.BOSS_LEVEL_HIGH_PLUS, false);
+        isBossLevelSuperEnabled = mSharedPreferences.getBoolean(SharedPreferencesConfigs.BOSS_LEVEL_SUPER, false);
         isWaitOthersReadyEnabled = mSharedPreferences.getBoolean(SharedPreferencesConfigs.WAIT_OTHERS_READY_CHECKBOX, false);
         isBellTrackerEnabled = mSharedPreferences.getBoolean(SharedPreferencesConfigs.BELL_TRACKER_SWITCH, false);
     }
@@ -132,8 +144,13 @@ public class TrackerService extends Service {
                 if (checkIsHomePage()) break;
                 if (!mTesseractOCR.getTextFromBitmap(BitmapUtils.crop(mBitmap, CoordinatePoints.BELL_DIALOG_TITLE)).contains(CheckPoints.BELL_DIALOG_TITLE))
                     break;
-                SimulateTouch.click(CoordinatePoints.BELL_JOIN);
-                mNowTask = GO_PREPARE_AS_GUEST;
+                if (checkBossLevelEnabled(mTesseractOCR.getTextFromBitmap(BitmapUtils.crop(mBitmap, CoordinatePoints.BELL_DIALOG_BOSS_INFO)))) {
+                    SimulateTouch.click(CoordinatePoints.BELL_JOIN);
+                    mNowTask = GO_PREPARE_AS_GUEST;
+                } else {
+                    SimulateTouch.click(CoordinatePoints.BELL_QUIT);
+                    mNowTask = NO_TASK;
+                }
                 break;
             case GO_PREPARE_AS_GUEST:
                 if (checkIsHomePage()) break;
@@ -206,6 +223,15 @@ public class TrackerService extends Service {
             return true;
         }
         return false;
+    }
+
+    private boolean checkBossLevelEnabled(String mBossInfo) {
+        if (mBossInfo == null) return false;
+        return (mBossInfo.contains(CheckPoints.BOSS_LEVEL_PRIMARY) && isBossLevelPrimaryEnabled) ||
+                (mBossInfo.contains(CheckPoints.BOSS_LEVEL_MIDDLE) && isBossLevelMiddleEnabled) ||
+                (mBossInfo.contains(CheckPoints.BOSS_LEVEL_HIGH) && isBossLevelHighEnabled) ||
+                (mBossInfo.contains(CheckPoints.BOSS_LEVEL_HIGH_PLUS) && isBossLevelHighPlusEnabled) ||
+                (mBossInfo.contains(CheckPoints.BOSS_LEVEL_SUPER) && isBossLevelSuperEnabled);
     }
 
     Thread initTrackerThread() {

@@ -39,6 +39,7 @@ public class CoordinatePoints {
     public final static BitmapInfo DIALOG_MESSAGE = new BitmapInfo(95, 436, 530, 285);
 
     public final static BitmapInfo BELL_DIALOG_TITLE = new BitmapInfo(295, 51, 126, 38);
+    public final static BitmapInfo BELL_DIALOG_BOSS_INFO = new BitmapInfo(220, 330, 318, 46);
     public final static BitmapInfo BATTLE_FAILED_RESURRECTION_BUTTON_TITLE = new BitmapInfo(261, 1034, 194, 60);
     public final static BitmapInfo BOTTOM_CONTINUE_BUTTON_TITLE = new BitmapInfo(300, 1175, 127, 57);
     public final static BitmapInfo BOTTOM_QUIT_ROOM_BUTTON_TITLE = new BitmapInfo(137, 1175, 155, 57);
