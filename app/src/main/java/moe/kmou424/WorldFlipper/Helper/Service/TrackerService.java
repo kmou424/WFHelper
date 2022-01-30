@@ -287,9 +287,9 @@ public class TrackerService extends Service {
                         }
                         FileUtils.deleteFile(mImagePath);
                     }
-                    // 每次执行后休眠0.8秒
+                    // 每次执行后休眠1秒
                     try {
-                        Thread.sleep(800);
+                        Thread.sleep(1000);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
