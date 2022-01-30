@@ -4,6 +4,7 @@ import static moe.kmou424.WorldFlipper.Helper.HandlerMsg.Action.ToastHandlerMsg.
 import static moe.kmou424.WorldFlipper.Helper.Constants.Global.*;
 import static moe.kmou424.WorldFlipper.Helper.HandlerMsg.HandlerMessage.*;
 
+import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.Service;
@@ -53,12 +54,16 @@ public class TrackerService extends Service {
     private boolean isBossLevelHighPlusEnabled;
     private boolean isBossLevelSuperEnabled;
 
+    private boolean isReLoginDelayEnabled;
+    private int reLoginDelay;
+    private int reLoginDelayCnt;
     private boolean isWaitOthersReadyEnabled;
     private boolean isBellTrackerEnabled;
 
     private boolean isEnteredRoom = false;
     private boolean isContinueClicked = false;
     private boolean stopScreenShotThread = false;
+
 
     public TrackerService() {
     }
@@ -97,6 +102,8 @@ public class TrackerService extends Service {
         isBossLevelHighEnabled = mSharedPreferences.getBoolean(SharedPreferencesConfigs.BOSS_LEVEL_HIGH, false);
         isBossLevelHighPlusEnabled = mSharedPreferences.getBoolean(SharedPreferencesConfigs.BOSS_LEVEL_HIGH_PLUS, false);
         isBossLevelSuperEnabled = mSharedPreferences.getBoolean(SharedPreferencesConfigs.BOSS_LEVEL_SUPER, false);
+        isReLoginDelayEnabled = mSharedPreferences.getBoolean(SharedPreferencesConfigs.RE_LOGIN_DELAY_ENABLED, false);
+        reLoginDelay = mSharedPreferences.getInt(SharedPreferencesConfigs.RE_LOGIN_DELAY_VALUE, 0) * 60;
         isWaitOthersReadyEnabled = mSharedPreferences.getBoolean(SharedPreferencesConfigs.WAIT_OTHERS_READY_CHECKBOX, false);
         isBellTrackerEnabled = mSharedPreferences.getBoolean(SharedPreferencesConfigs.BELL_TRACKER_SWITCH, false);
     }
@@ -111,6 +118,7 @@ public class TrackerService extends Service {
         };
     }
 
+    @SuppressLint("DefaultLocale")
     private void mainChecker(@NonNull Message msg) {
         if (DEBUG) Log.d(LOG_TAG, "NowTask: " + TASKS.get(msg.what));
         Logger.out(Logger.INFO, LOG_TAG, "NowTask", TASKS.get(msg.what));
@@ -118,12 +126,24 @@ public class TrackerService extends Service {
         if (checkDialog()) {
             mNowTask = NO_TASK;
             SimulateTouch.click(CoordinatePoints.DIALOG_BUTTON);
+            String mDialogMessage = mTesseractOCR.getTextFromBitmap(BitmapUtils.crop(mBitmap, CoordinatePoints.DIALOG_MESSAGE));
             // 判断对话框内容是否为日期变了
-            if (mTesseractOCR.getTextFromBitmap(BitmapUtils.crop(mBitmap, CoordinatePoints.DIALOG_MESSAGE)).contains(CheckPoints.DIALOG_MESSAGE_UPDATE_TIME)) {
+            if (mDialogMessage.contains(CheckPoints.DIALOG_MESSAGE_UPDATE_TIME)) {
                 // 将任务设置为前往重新登录
                 mNowTask = GO_RE_LOGIN;
                 // 将本次Handler任务设置为重新登录
                 msg.what = GO_RE_LOGIN;
+            }
+            // 判断对话框内容是否为被挤下线
+            if (mDialogMessage.contains(CheckPoints.DIALOG_MESSAGE_POP_OFF_LOGIN)) {
+                // 将任务设置为前往延时重新登录
+                if (isReLoginDelayEnabled) mNowTask = GO_RE_LOGIN_DELAY;
+                else mNowTask = GO_RE_LOGIN;
+                // 将本次Handler任务设置为延时重新登录
+                if (isReLoginDelayEnabled) msg.what = GO_RE_LOGIN_DELAY;
+                else msg.what = GO_RE_LOGIN;
+                // 重置计数器
+                reLoginDelayCnt = 0;
             }
         }
         switch (msg.what) {
@@ -131,6 +151,15 @@ public class TrackerService extends Service {
                 if (!checkIsHomePage()) {
                     // 点击公告关闭按钮位置来登录&跳过签到/公告
                     SimulateTouch.click(CoordinatePoints.NOTICE_CLOSE_BUTTON);
+                }
+                break;
+            case GO_RE_LOGIN_DELAY:
+                if (reLoginDelayCnt >= reLoginDelay) {
+                    mNowTask = GO_RE_LOGIN;
+                } else {
+                    reLoginDelayCnt++;
+                    Log.d(LOG_TAG, String.format("正在等待重新登录...还剩%d秒", reLoginDelay - reLoginDelayCnt));
+                    Logger.out(Logger.INFO, LOG_TAG, "reLoginDelay", String.format("正在等待重新登录...还剩%d秒", reLoginDelay - reLoginDelayCnt));
                 }
                 break;
             case GO_CHECK_BITMAP:

@@ -27,6 +27,7 @@ public class CheckPoints {
             new RgbInfo(0x29, 0xbd, 0xb2), new RgbInfo(0x31, 0xc9, 0xbe)
     );
     public final static String DIALOG_MESSAGE_UPDATE_TIME = "日期变了";
+    public final static String DIALOG_MESSAGE_POP_OFF_LOGIN = "您的账号已在其它设备登录";
 
     // Bottom navigation
     public final static ColorInfo BOTTOM_NAV_HOME_INACTIVATE_COLOR = new ColorInfo(

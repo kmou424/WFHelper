@@ -34,6 +34,8 @@
     <string name="wf_boss_level_high">高级</string>
     <string name="wf_boss_level_high_plus">高级+</string>
     <string name="wf_boss_level_super">超级</string>
+    <string name="wf_features_common_title">通用功能</string>
     <string name="wf_wait_for_others_ready_checkbox_text">等待其他人准备完成再准备</string>
+    <string name="wf_re_login_delay_checkbox">被挤下线后重新登录(分钟):</string>
     <string name="wf_bell_tracker_switch_text">监听铃铛</string>
 </resources>

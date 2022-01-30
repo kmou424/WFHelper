@@ -14,6 +14,7 @@ public class Global {
     public final static HashMap<Integer, String> TASKS = new HashMap<>() {{
         put(NO_TASK, "无任务");
         put(GO_RE_LOGIN, "重新登录");
+        put(GO_RE_LOGIN_DELAY, "延时重新登录");
         put(GO_BELL, "进入铃铛事件");
         put(GO_PREPARE_AS_GUEST, "战斗前准备中");
         put(GO_WAITING_FOR_FINISH, "等待战斗结束");

@@ -6,6 +6,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.text.Editable;
+import android.text.InputType;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -22,6 +24,7 @@ import androidx.core.widget.NestedScrollView;
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.checkbox.MaterialCheckBox;
 import com.google.android.material.switchmaterial.SwitchMaterial;
+import com.google.android.material.textfield.TextInputEditText;
 
 import moe.kmou424.WorldFlipper.Helper.Constants.SharedPreferencesConfigs;
 import moe.kmou424.WorldFlipper.Helper.HandlerMsg.HandlerMessage;
@@ -120,32 +123,24 @@ public class WFPanel {
 
     // Private: Get a custom view
     private MaterialCardView getSubView2() {
-        // Sub1: Widget1: Title
-        TextView mSub1Title = new TextView(mContext);
-        mSub1Title.setText(R.string.wf_boss_level_title);
-        mSub1Title.setTextSize(18);
-        mSub1Title.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
-        mSub1Title.setGravity(Gravity.CENTER_HORIZONTAL);
-        // Sub1: Widget2: Boss level selection: primary
+        // Sub1: Widget1: Boss level selection: primary
         MaterialCheckBox mBossLevelPrimaryCheckBox = getMaterialCheckBox(R.string.wf_boss_level_primary, R.id.wf_boss_level_primary);
         mBossLevelPrimaryCheckBox.setChecked(MainActivity.mSharedPreferences.getBoolean(SharedPreferencesConfigs.BOSS_LEVEL_PRIMARY, true));
-        // Sub1: Widget3: Boss level selection: middle
+        // Sub1: Widget2: Boss level selection: middle
         MaterialCheckBox mBossLevelMiddleCheckBox = getMaterialCheckBox(R.string.wf_boss_level_middle, R.id.wf_boss_level_middle);
         mBossLevelMiddleCheckBox.setChecked(MainActivity.mSharedPreferences.getBoolean(SharedPreferencesConfigs.BOSS_LEVEL_MIDDLE, true));
-        // Sub1: Widget4: Boss level selection: high
+        // Sub1: Widget3: Boss level selection: high
         MaterialCheckBox mBossLevelHighCheckBox = getMaterialCheckBox(R.string.wf_boss_level_high, R.id.wf_boss_level_high);
         mBossLevelHighCheckBox.setChecked(MainActivity.mSharedPreferences.getBoolean(SharedPreferencesConfigs.BOSS_LEVEL_HIGH, true));
-        // Sub1: Widget5: Boss level selection: high plus
+        // Sub1: Widget4: Boss level selection: high plus
         MaterialCheckBox mBossLevelHighPlusCheckBox = getMaterialCheckBox(R.string.wf_boss_level_high_plus, R.id.wf_boss_level_high_plus);
         mBossLevelHighPlusCheckBox.setChecked(MainActivity.mSharedPreferences.getBoolean(SharedPreferencesConfigs.BOSS_LEVEL_HIGH_PLUS, true));
-        // Sub1: Widget6: Boss level selection: super
+        // Sub1: Widget5: Boss level selection: super
         MaterialCheckBox mBossLevelSuperCheckBox = getMaterialCheckBox(R.string.wf_boss_level_super, R.id.wf_boss_level_super);
         mBossLevelSuperCheckBox.setChecked(MainActivity.mSharedPreferences.getBoolean(SharedPreferencesConfigs.BOSS_LEVEL_SUPER, true));
 
         // SubView: Root -> Sub -> Sub1
-        LinearLayout mSubViewChildView1 = getLinearLayoutContainer(0, 6, LinearLayout.VERTICAL);
-        mSubViewChildView1.setBackgroundResource(R.drawable.corner_background);
-        mSubViewChildView1.addView(mSub1Title);
+        LinearLayout mSubViewChildView1 = getFeaturesArea(R.string.wf_boss_level_title);
         mSubViewChildView1.addView(mBossLevelPrimaryCheckBox);
         mSubViewChildView1.addView(mBossLevelMiddleCheckBox);
         mSubViewChildView1.addView(mBossLevelHighCheckBox);
@@ -155,14 +150,25 @@ public class WFPanel {
         // Sub2: Widget1: Wait for others ready
         MaterialCheckBox mWaitOthersReadyCheckBox = getMaterialCheckBox(R.string.wf_wait_for_others_ready_checkbox_text, R.id.wf_wait_others_ready_checkbox);
         mWaitOthersReadyCheckBox.setChecked(MainActivity.mSharedPreferences.getBoolean(SharedPreferencesConfigs.WAIT_OTHERS_READY_CHECKBOX, false));
+        // Sub2: Widget2: Re-login delay
+        MaterialCheckBox mReLoginDelayCheckBox = getMaterialCheckBox(R.string.wf_re_login_delay_checkbox, R.id.wf_re_login_delay_checkbox);
+        mReLoginDelayCheckBox.setChecked(MainActivity.mSharedPreferences.getBoolean(SharedPreferencesConfigs.RE_LOGIN_DELAY_ENABLED, false));
+        TextInputEditText mReLoginDelayEditText = new TextInputEditText(mContext);
+        mReLoginDelayEditText.setInputType(InputType.TYPE_CLASS_NUMBER);
+        mReLoginDelayEditText.setText(String.valueOf(MainActivity.mSharedPreferences.getInt(SharedPreferencesConfigs.RE_LOGIN_DELAY_VALUE, 0)));
+        mReLoginDelayEditText.setId(R.id.wf_re_login_delay_edittext);
+        // Sub2: Widget2: Container
+        LinearLayout mReLoginDelayContainer = getLinearLayoutContainer(0, 0, LinearLayout.HORIZONTAL);
+        mReLoginDelayContainer.addView(mReLoginDelayCheckBox);
+        mReLoginDelayContainer.addView(mReLoginDelayEditText);
 
         // SubView: Root -> Sub -> Sub2
-        LinearLayout mSubViewChildView2 = getLinearLayoutContainer(0, 6, LinearLayout.VERTICAL);
-        mSubViewChildView2.setBackgroundResource(R.drawable.corner_background);
+        LinearLayout mSubViewChildView2 = getFeaturesArea(R.string.wf_features_common_title);
         mSubViewChildView2.addView(mWaitOthersReadyCheckBox);
+        mSubViewChildView2.addView(mReLoginDelayContainer);
 
         //Root -> Sub
-        LinearLayout mSubViewChildRoot = getLinearLayoutContainer(20, 12, LinearLayout.VERTICAL);
+        LinearLayout mSubViewChildRoot = getLinearLayoutContainer(12, 12, LinearLayout.VERTICAL);
         mSubViewChildRoot.addView(mSubViewChildView1);
         mSubViewChildRoot.addView(mSubViewChildView2);
 
@@ -178,6 +184,20 @@ public class WFPanel {
         mMaterialCheckBox.setText(mText);
         mMaterialCheckBox.setId(mId);
         return mMaterialCheckBox;
+    }
+
+    private LinearLayout getFeaturesArea(@StringRes int mTitleText) {
+        TextView mTitle = new TextView(mContext);
+        mTitle.setText(mTitleText);
+        mTitle.setTextSize(18);
+        mTitle.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
+        mTitle.setGravity(Gravity.CENTER_HORIZONTAL);
+        LinearLayout mLinearLayout = getLinearLayoutContainer(0, 6, LinearLayout.VERTICAL);
+        mLinearLayout.setOrientation(LinearLayout.VERTICAL);
+        mLinearLayout.setBackgroundResource(R.drawable.corner_background);
+        mLinearLayout.setPadding(6, 6, 6, 6);
+        mLinearLayout.addView(mTitle);
+        return mLinearLayout;
     }
 
     // Common get a container: LinearLayout
@@ -222,6 +242,21 @@ class StartTrackerListener implements DialogInterface.OnClickListener {
     @SuppressLint("CommitPrefEdits")
     @Override
     public void onClick(DialogInterface dialogInterface, int i) {
+        // EditText
+        int mReLoginDelayEditTextNum = 0;
+        if (((MaterialCheckBox)WFPanel.mAlertDialog.findViewById(R.id.wf_re_login_delay_checkbox)).isChecked()) {
+            Editable mReLoginDelayEditable = ((TextInputEditText) WFPanel.mAlertDialog.findViewById(R.id.wf_re_login_delay_edittext)).getText();
+            if (mReLoginDelayEditable != null) {
+                String mReLoginDelayEditTextString = mReLoginDelayEditable.toString();
+                if (!mReLoginDelayEditTextString.equals("") && !mReLoginDelayEditTextString.isEmpty()) {
+                    mReLoginDelayEditTextNum = Integer.parseInt(mReLoginDelayEditTextString);
+                } else {
+                    mReLoginDelayEditTextNum = 0;
+                }
+            } else {
+                mReLoginDelayEditTextNum = 0;
+            }
+        }
         // Bell Tracker
         MainActivity.mSharedPreferences.edit()
                 .putBoolean(SharedPreferencesConfigs.BOSS_LEVEL_PRIMARY, ((MaterialCheckBox)WFPanel.mAlertDialog.findViewById(R.id.wf_boss_level_primary)).isChecked())
@@ -229,6 +264,8 @@ class StartTrackerListener implements DialogInterface.OnClickListener {
                 .putBoolean(SharedPreferencesConfigs.BOSS_LEVEL_HIGH, ((MaterialCheckBox)WFPanel.mAlertDialog.findViewById(R.id.wf_boss_level_high)).isChecked())
                 .putBoolean(SharedPreferencesConfigs.BOSS_LEVEL_HIGH_PLUS, ((MaterialCheckBox)WFPanel.mAlertDialog.findViewById(R.id.wf_boss_level_high_plus)).isChecked())
                 .putBoolean(SharedPreferencesConfigs.BOSS_LEVEL_SUPER, ((MaterialCheckBox)WFPanel.mAlertDialog.findViewById(R.id.wf_boss_level_super)).isChecked())
+                .putBoolean(SharedPreferencesConfigs.RE_LOGIN_DELAY_ENABLED, ((MaterialCheckBox)WFPanel.mAlertDialog.findViewById(R.id.wf_re_login_delay_checkbox)).isChecked())
+                .putInt(SharedPreferencesConfigs.RE_LOGIN_DELAY_VALUE, mReLoginDelayEditTextNum)
                 .putBoolean(SharedPreferencesConfigs.WAIT_OTHERS_READY_CHECKBOX, ((MaterialCheckBox)WFPanel.mAlertDialog.findViewById(R.id.wf_wait_others_ready_checkbox)).isChecked())
                 .putBoolean(SharedPreferencesConfigs.BELL_TRACKER_SWITCH, ((SwitchMaterial)WFPanel.mAlertDialog.findViewById(R.id.wf_bell_tracker_switch)).isChecked())
         .apply();

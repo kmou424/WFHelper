@@ -21,11 +21,12 @@ public class HandlerMessage<T> {
 
     // Tracker Action 301+
     public final static int GO_RE_LOGIN = 301;
-    public final static int GO_CHECK_BITMAP = 302;
-    public final static int GO_BELL = 303;
-    public final static int GO_PREPARE_AS_GUEST = 304;
-    public final static int GO_WAITING_FOR_FINISH = 305;
-    public final static int GO_MAIN_PAGE = 306;
+    public final static int GO_RE_LOGIN_DELAY = 302;
+    public final static int GO_CHECK_BITMAP = 303;
+    public final static int GO_BELL = 304;
+    public final static int GO_PREPARE_AS_GUEST = 305;
+    public final static int GO_WAITING_FOR_FINISH = 306;
+    public final static int GO_MAIN_PAGE = 307;
 
     /*
     * Convert obj to handler message
