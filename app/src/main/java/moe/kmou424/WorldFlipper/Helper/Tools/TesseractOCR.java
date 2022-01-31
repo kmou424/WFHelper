@@ -58,6 +58,7 @@ public class TesseractOCR {
         mTessBaseAPI.setImage(mBitmap);
         String ret = mTessBaseAPI.getUTF8Text().replaceAll(" ", "");
         if (Global.DEBUG) Log.d(LOG_TAG, ret);
+        Logger.out(Logger.INFO, LOG_TAG, "getTextFromBitmap", ret);
         return ret;
     }
 }
