@@ -103,7 +103,7 @@ public class TrackerService extends Service {
         isBossLevelHighPlusEnabled = mSharedPreferences.getBoolean(SharedPreferencesConfigs.BOSS_LEVEL_HIGH_PLUS, false);
         isBossLevelSuperEnabled = mSharedPreferences.getBoolean(SharedPreferencesConfigs.BOSS_LEVEL_SUPER, false);
         isReLoginDelayEnabled = mSharedPreferences.getBoolean(SharedPreferencesConfigs.RE_LOGIN_DELAY_ENABLED, false);
-        reLoginDelay = mSharedPreferences.getInt(SharedPreferencesConfigs.RE_LOGIN_DELAY_VALUE, 0) * 60;
+        reLoginDelay = mSharedPreferences.getInt(SharedPreferencesConfigs.RE_LOGIN_DELAY_VALUE, 0) * 80; // 60 / 0.75
         isWaitOthersReadyEnabled = mSharedPreferences.getBoolean(SharedPreferencesConfigs.WAIT_OTHERS_READY_CHECKBOX, false);
         isBellTrackerEnabled = mSharedPreferences.getBoolean(SharedPreferencesConfigs.BELL_TRACKER_SWITCH, false);
     }
@@ -287,9 +287,9 @@ public class TrackerService extends Service {
                         }
                         FileUtils.deleteFile(mImagePath);
                     }
-                    // 每次执行后休眠1秒
+                    // 每次执行后休眠0.75秒
                     try {
-                        Thread.sleep(1000);
+                        Thread.sleep(750);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
