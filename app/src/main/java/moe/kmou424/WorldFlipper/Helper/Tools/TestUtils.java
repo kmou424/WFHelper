@@ -2,7 +2,6 @@ package moe.kmou424.WorldFlipper.Helper.Tools;
 
 import android.graphics.Bitmap;
 import android.os.Environment;
-import android.util.Log;
 import android.widget.ImageView;
 
 import moe.kmou424.WorldFlipper.Helper.Info.BitmapInfo;

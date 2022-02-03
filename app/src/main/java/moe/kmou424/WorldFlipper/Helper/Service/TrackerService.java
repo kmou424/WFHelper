@@ -20,8 +20,6 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.util.HashMap;
 
 import moe.kmou424.WorldFlipper.Helper.Constants.CheckPoints;

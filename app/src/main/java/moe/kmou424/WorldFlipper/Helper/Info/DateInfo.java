@@ -1,7 +1,6 @@
 package moe.kmou424.WorldFlipper.Helper.Info;
 
 import android.annotation.SuppressLint;
-import android.util.Log;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
