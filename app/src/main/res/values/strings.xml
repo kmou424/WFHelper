@@ -28,12 +28,27 @@
         3. 启动服务前请前往您的Root管理软件关闭本App的Root授权提示，以免频繁弹出的提示遮挡界面，影响识别效果\n
         4. 请确保您的模拟器/手机的Android版本为5.1 – 7.1，否则可能会运行异常
     </string>
-    <string name="wf_boss_level_title">Boss难度选择</string>
+    <string name="wf_boss_level_filter_title">Boss筛选器</string>
+    <string name="wf_boss_level_filter_team_summary">指定队伍(A-J): </string>
+
     <string name="wf_boss_level_primary">初级</string>
     <string name="wf_boss_level_middle">中级</string>
     <string name="wf_boss_level_high">高级</string>
     <string name="wf_boss_level_high_plus">高级+</string>
     <string name="wf_boss_level_super">超级</string>
+    <string name="wf_boss_name_1">维·索拉斯</string>
+    <string name="wf_boss_name_2">不死王瑞西塔尔</string>
+    <string name="wf_boss_name_3">废墟魔像</string>
+    <string name="wf_boss_name_4">潮汐巨妖</string>
+    <string name="wf_boss_name_5">寄居蟹船长</string>
+    <string name="wf_boss_name_6">诅咒弧魔艾基尔</string>
+    <string name="wf_boss_name_7">白虎</string>
+    <string name="wf_boss_name_8">Sec-5200Li</string>
+    <string name="wf_boss_name_9">管理者</string>
+    <string name="wf_boss_name_10">八岐大蛇</string>
+    <string name="wf_boss_name_11">指挥者</string>
+    <string name="wf_boss_name_12">女王·拉芙</string>
+
     <string name="wf_features_common_title">通用功能</string>
     <string name="wf_wait_for_others_ready_checkbox_text">等待其他人准备完成再准备</string>
     <string name="wf_re_login_delay_checkbox">被挤下线后重新登录(分钟):</string>

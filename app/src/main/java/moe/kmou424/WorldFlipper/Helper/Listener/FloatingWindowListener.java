@@ -8,12 +8,15 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
+import moe.kmou424.WorldFlipper.Helper.Constants.CoordinatePoints;
 import moe.kmou424.WorldFlipper.Helper.Constants.Global;
 import moe.kmou424.WorldFlipper.Helper.HandlerMsg.Action.ToastHandlerMsg;
 import moe.kmou424.WorldFlipper.Helper.HandlerMsg.HandlerMessage;
 import moe.kmou424.WorldFlipper.Helper.MainActivity;
 import moe.kmou424.WorldFlipper.Helper.R;
 import moe.kmou424.WorldFlipper.Helper.Tools.RootUtils;
+import moe.kmou424.WorldFlipper.Helper.Tools.TesseractOCR;
+import moe.kmou424.WorldFlipper.Helper.Tools.TestUtils;
 import moe.kmou424.WorldFlipper.Helper.Widget.FloatingWindow;
 
 public class FloatingWindowListener {

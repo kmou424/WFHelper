@@ -7,6 +7,8 @@
     <item name="floatingSubButton2" type="id"/>
     <item name="floatingSubButton3" type="id"/>
 
+
+    <item name="wf_boss_filter_layout_root" type="id"/>
     <item name="wf_boss_level_primary" type="id"/>
     <item name="wf_boss_level_middle" type="id"/>
     <item name="wf_boss_level_high" type="id"/>

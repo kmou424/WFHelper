@@ -13,6 +13,10 @@ public class CheckPoints {
     public final static String BOSS_LEVEL_HIGH_PLUS = "高级+";
     public final static String BOSS_LEVEL_SUPER = "超级";
 
+    // 编队界面队伍指示小点激活时颜色
+    public final static ColorInfo EDIT_TEAM_INDICATOR_DOT_ACTIVE_COLOR = new ColorInfo(
+            new RgbInfo(0xff, 0x9a, 0x16), new RgbInfo(0xff, 0xa9, 0x26)
+    );
     public final static ColorInfo ROOM_PREPARE_READY_COLOR = new ColorInfo(
             new RgbInfo(0xff, 0x9a, 0x16), new RgbInfo(0xff, 0xa9, 0x26)
     );
