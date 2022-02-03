@@ -10,8 +10,8 @@ android {
         applicationId "moe.kmou424.WorldFlipper.Helper"
         minSdk 23
         targetSdk 25
-        versionCode 2
-        versionName "1.0.2-GreyCyan"
+        versionCode 3
+        versionName "1.0.3-GreyCyan"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
