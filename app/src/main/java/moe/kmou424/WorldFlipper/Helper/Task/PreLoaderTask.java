@@ -31,9 +31,9 @@ public class PreLoaderTask {
                 super.run();
                 for (String mTRAINED_DATA : TesseractOCR.TRAINED_DATA_RES_LIST) {
                     String targetFile = TesseractOCR.getTessDataDir() + "/" + mTRAINED_DATA;
-                    Logger.out(Logger.INFO, LOG_TAG, mThreadName, "Checking file \"" + targetFile + "\"");
+                    Logger.outWithSysStream(Logger.INFO, LOG_TAG, mThreadName, "Checking file \"" + targetFile + "\"");
                     if (!FileUtils.isFileExist(targetFile)) {
-                        Logger.out(Logger.INFO, LOG_TAG, mThreadName, "\"" + targetFile + "\" not found, copying...");
+                        Logger.outWithSysStream(Logger.INFO, LOG_TAG, mThreadName, "\"" + targetFile + "\" not found, copying...");
                         FileUtils.copyAssets(mContext, TesseractOCR.getTessDataDir(), mTRAINED_DATA);
                     }
                 }

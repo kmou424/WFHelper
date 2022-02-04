@@ -183,7 +183,7 @@ public class MainActivity extends AppCompatActivity {
         checkPermission();
         if (!FileUtils.isDirExist(FileUtils.getExternalRoot())) FileUtils.createDir(FileUtils.getExternalRoot());
         FileUtils.deleteFile(FileUtils.getExternalRoot() + "/log.txt");
-        Logger.out(Logger.INFO, getLocalClassName(), "onCreate", "Application launched");
+        Logger.outWithSysStream(Logger.INFO, getLocalClassName(), "onCreate", "Application launched");
         initHandler();
         initObjects();
         initRoot();

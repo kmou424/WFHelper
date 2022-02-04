@@ -1,11 +1,8 @@
 package moe.kmou424.WorldFlipper.Helper.Tools;
 
-import android.util.Log;
-
 import java.io.BufferedOutputStream;
 import java.io.PrintStream;
 
-import moe.kmou424.WorldFlipper.Helper.Constants.Global;
 import moe.kmou424.WorldFlipper.Helper.Logger.Logger;
 
 public class ScreenUtils {
@@ -32,8 +29,7 @@ public class ScreenUtils {
                 process.destroy();
             }
         }
-        if (Global.DEBUG) Log.d(LOG_TAG, "Screenshot was save at " + filePath);
-        Logger.out(Logger.INFO, LOG_TAG, "takeScreenShot", "Screenshot was save at " + filePath);
+        Logger.outWithSysStream(Logger.INFO, LOG_TAG, "takeScreenShot", "Screenshot was save at " + filePath);
         return filePath;
     }
 }

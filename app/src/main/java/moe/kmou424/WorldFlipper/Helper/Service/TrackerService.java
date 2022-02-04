@@ -107,11 +107,9 @@ public class TrackerService extends Service {
                     mSharedPreferences.getBoolean(mBossInfoWrapper.BossEnabledConf, true),
                     BossInfoWrapper.getBossLevels(mBossInfoWrapper.BossLevelsConf),
                     mSharedPreferences.getString(mBossInfoWrapper.BossTeamConf, "null"));
-            Log.d(LOG_TAG, String.format("%s %b", mBossName, mBossInfo.isEnabled));
-            Logger.out(Logger.INFO, LOG_TAG, "initConfig", String.format("%s %b", mBossName, mBossInfo.isEnabled));
+            Logger.outWithSysStream(Logger.INFO, LOG_TAG, "initConfig", String.format("%s %b", mBossName, mBossInfo.isEnabled));
             for (String mLevel : mBossInfo.mLevels) {
-                Log.d(LOG_TAG, mLevel);
-                Logger.out(Logger.INFO, LOG_TAG, "init", mLevel);
+                Logger.outWithSysStream(Logger.INFO, LOG_TAG, "init", mLevel);
             }
             mBossInfoMap.put(mBossName, mBossInfo);
         }
@@ -133,8 +131,7 @@ public class TrackerService extends Service {
 
     @SuppressLint("DefaultLocale")
     private void mainChecker(@NonNull Message msg) {
-        if (DEBUG) Log.d(LOG_TAG, "NowTask: " + TASKS.get(msg.what));
-        Logger.out(Logger.INFO, LOG_TAG, "NowTask", TASKS.get(msg.what));
+        Logger.outWithSysStream(Logger.INFO, LOG_TAG, "NowTask", TASKS.get(msg.what));
         // 检查对话框，有对话框的话就给他点了
         if (checkDialog()) {
             mNowTask = NO_TASK;
@@ -160,8 +157,7 @@ public class TrackerService extends Service {
             }
         }
         if (isLoading()) {
-            Log.d(LOG_TAG, "NowTask: 加载中");
-            Logger.out(Logger.INFO, LOG_TAG, "NowTask", "加载中");
+            Logger.outWithSysStream(Logger.INFO, LOG_TAG, "NowTask", "加载中");
             if (mNowTask == GO_PREPARE_AS_GUEST && isEnteredRoom) {
                 mNowTask = GO_WAITING_FOR_FINISH;
             }
@@ -179,8 +175,7 @@ public class TrackerService extends Service {
                     mNowTask = GO_RE_LOGIN;
                 } else {
                     reLoginDelayCnt++;
-                    Log.d(LOG_TAG, String.format("正在等待重新登录...还剩%d秒", reLoginDelay - reLoginDelayCnt));
-                    Logger.out(Logger.INFO, LOG_TAG, "reLoginDelay", String.format("正在等待重新登录...还剩%d秒", reLoginDelay - reLoginDelayCnt));
+                    Logger.outWithSysStream(Logger.INFO, LOG_TAG, "reLoginDelay", String.format("正在等待重新登录...还剩%d秒", reLoginDelay - reLoginDelayCnt));
                 }
                 break;
             case GO_CHECK_BITMAP:
@@ -388,8 +383,7 @@ public class TrackerService extends Service {
             public void run() {
                 super.run();
                 if (hasAsyncTask) {
-                    if (DEBUG) Log.d(LOG_TAG, "ScreenShot is paused, because there is an async task is running");
-                    Logger.out(Logger.INFO, LOG_TAG, "ScreenShotThread", "ScreenShot is paused, because there is an async task is running");
+                    Logger.outWithSysStream(Logger.INFO, LOG_TAG, "ScreenShotThread", "ScreenShot is paused, because there is an async task is running");
                 }
                 while (!stopScreenShotThread && !hasAsyncTask) {
                     // 获取前台进程包名

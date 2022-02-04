@@ -1,11 +1,9 @@
 package moe.kmou424.WorldFlipper.Helper.Tools;
 
 import android.graphics.Bitmap;
-import android.util.Log;
 
 import com.googlecode.tesseract.android.TessBaseAPI;
 
-import moe.kmou424.WorldFlipper.Helper.Constants.Global;
 import moe.kmou424.WorldFlipper.Helper.Logger.Logger;
 
 public class TesseractOCR {
@@ -17,7 +15,7 @@ public class TesseractOCR {
 
     public TesseractOCR(String language) {
         mTessBaseAPI = new TessBaseAPI();
-        Logger.out(Logger.INFO, LOG_TAG, LOG_TAG,
+        Logger.outWithSysStream(Logger.INFO, LOG_TAG, LOG_TAG,
                 "Init details: Location: \"" + getTessDataDir() + "\", Language: \"" + language + "\"");
         mTessBaseAPI.init(FileUtils.getExternalRoot() + "/", language);
         this.mLanguage = language;
@@ -59,8 +57,7 @@ public class TesseractOCR {
         if (isRecycled) return "";
         mTessBaseAPI.setImage(mBitmap);
         String ret = mTessBaseAPI.getUTF8Text().replaceAll(" ", "");
-        if (Global.DEBUG) Log.d(String.format("%s(%s)", LOG_TAG, mLanguage), ret);
-        Logger.out(Logger.INFO, String.format("%s(%s)", LOG_TAG, mLanguage), "getTextFromBitmap", ret);
+        Logger.outWithSysStream(Logger.INFO, String.format("%s(%s)", LOG_TAG, mLanguage), "getTextFromBitmap", ret);
         return ret;
     }
 }

@@ -1,6 +1,7 @@
 package moe.kmou424.WorldFlipper.Helper.Logger;
 
 import android.annotation.SuppressLint;
+import android.util.Log;
 
 import moe.kmou424.WorldFlipper.Helper.Constants.Global;
 import moe.kmou424.WorldFlipper.Helper.Tools.FileUtils;
@@ -48,5 +49,25 @@ public class Logger {
         redirectOutStream();
         System.out.printf("[%s] [%s] %s.%s(): %s\n", getLoggerTime(), LoggerLevel[mLoggerLevel], mLogClass, mLogMethod, mLogText);
         restoreOutStream();
+    }
+
+    public static void outWithSysStream(int mLoggerLevel, String mLogClass, String mLogMethod, String mLogText) {
+        if (Global.DEBUG) {
+            switch (mLoggerLevel) {
+                case DEBUG:
+                    Log.d(mLogClass, mLogText);
+                    break;
+                case INFO:
+                    Log.i(mLogClass, mLogText);
+                    break;
+                case WARNING:
+                    Log.w(mLogClass, mLogText);
+                    break;
+                case ERROR:
+                    Log.e(mLogClass, mLogText);
+                    break;
+            }
+        }
+        out(mLoggerLevel, mLogClass, mLogMethod, mLogText);
     }
 }

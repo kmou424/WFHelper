@@ -4,13 +4,11 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Point;
-import android.util.Log;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import moe.kmou424.WorldFlipper.Helper.Constants.Global;
 import moe.kmou424.WorldFlipper.Helper.Info.BitmapInfo;
 import moe.kmou424.WorldFlipper.Helper.Info.RgbInfo;
 import moe.kmou424.WorldFlipper.Helper.Logger.Logger;
@@ -55,8 +53,7 @@ public class BitmapUtils {
                 Integer.toHexString(Color.green(pixel)),
                 Integer.toHexString(Color.blue(pixel))).toUpperCase();
         String mLogContent = String.format("Picked color %s", ret);
-        if (Global.DEBUG) Log.d(LOG_TAG, mLogContent);
-        Logger.out(Logger.INFO, LOG_TAG, "getHexRGBString", mLogContent);
+        Logger.outWithSysStream(Logger.INFO, LOG_TAG, "getHexRGBString", mLogContent);
 
         return ret;
     }
@@ -68,8 +65,7 @@ public class BitmapUtils {
                 Integer.toHexString(Color.green(pixel)),
                 Integer.toHexString(Color.blue(pixel)));
         String mLogContent = String.format("Picked color %s", ret);
-        if (Global.DEBUG) Log.d(LOG_TAG, mLogContent);
-        Logger.out(Logger.INFO, LOG_TAG, "getHexRGB", mLogContent);
+        Logger.outWithSysStream(Logger.INFO, LOG_TAG, "getHexRGB", mLogContent);
 
         return Integer.parseInt(ret, 16);
     }
@@ -81,8 +77,7 @@ public class BitmapUtils {
                 Integer.toHexString(Color.green(pixel)),
                 Integer.toHexString(Color.blue(pixel)));
         String mLogContent = String.format("Picked color %s", ret);
-        if (Global.DEBUG) Log.d(LOG_TAG, mLogContent);
-        Logger.out(Logger.INFO, LOG_TAG, "getPixelRgbInfo", mLogContent);
+        Logger.outWithSysStream(Logger.INFO, LOG_TAG, "getPixelRgbInfo", mLogContent);
         return new RgbInfo(
                 Integer.parseInt(Integer.toHexString(Color.red(pixel)), 16),
                 Integer.parseInt(Integer.toHexString(Color.green(pixel)), 16),

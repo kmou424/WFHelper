@@ -34,7 +34,7 @@ public class WFThread extends Thread {
                 mHandler.sendMessage(new HandlerMessage<ProgressDialogHandlerMsg>().make(mProgressDialogHandlerMsg, HandlerMessage.SHOW_PROGRESS_DIALOG));
             }
             while (mLastThread.isAlive()) {
-                Logger.out(Logger.INFO, LOG_TAG,  "run",
+                Logger.outWithSysStream(Logger.INFO, LOG_TAG,  "run",
                         "Last thread \"" + mLastThread.getName() + "\" is running, waiting...");
                 try {
                     Thread.sleep(1000);
