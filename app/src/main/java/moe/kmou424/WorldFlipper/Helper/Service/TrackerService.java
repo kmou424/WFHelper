@@ -62,6 +62,7 @@ public class TrackerService extends Service {
 
     private boolean isEnteredRoom = false;
     private boolean isContinueClicked = false;
+    private boolean isWaitAsyncTask = false;
     private boolean stopScreenShotThread = false;
 
     @Nullable
@@ -331,15 +332,15 @@ public class TrackerService extends Service {
                 SimulateTouch.click(CoordinatePoints.PREPARE_EDIT_TEAM_OK);
                 // 恢复状态，以免下次循环又进来了
                 mHaveTargetTeam = false;
+                isWaitAsyncTask = false;
                 return true;
             } else {
                 // 如果目标队伍idx大于当前队伍idx，则往后翻，反之则往前
-                for (int i = 0; i < Math.abs(mTargetTeamIdx - cur); ++i) {
-                    if (mTargetTeamIdx > cur) {
-                        swipeNext();
-                    } else {
-                        swipeLast();
-                    }
+                isWaitAsyncTask = true;
+                if (mTargetTeamIdx > cur) {
+                    swipeNext();
+                } else {
+                    swipeLast();
                 }
                 return false;
             }
@@ -372,6 +373,13 @@ public class TrackerService extends Service {
             @Override
             public void run() {
                 super.run();
+                if (isWaitAsyncTask) {
+                    try {
+                        Thread.sleep(150);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
                 while (!stopScreenShotThread) {
                     // 获取前台进程包名
                     mTopProcess = RootUtils.getTopProcess();
@@ -379,7 +387,6 @@ public class TrackerService extends Service {
                     if (mTopProcess.contains(WORLD_FLIPPER_PACKAGE_NAME_LT_SERVER)) {
                         mBitmap = ScreenUtils.takeScreenShotAsBitmap();
                         if (mBitmap != null) {
-                            Log.d(LOG_TAG, "Test");
                             if (mNowTask == NO_TASK) mHandler.sendEmptyMessage(GO_CHECK_BITMAP);
                             else mHandler.sendEmptyMessage(mNowTask);
                         } else {

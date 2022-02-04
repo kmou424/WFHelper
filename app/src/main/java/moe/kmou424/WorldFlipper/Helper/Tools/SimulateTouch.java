@@ -21,7 +21,6 @@ public class SimulateTouch {
             }
             os.write(cmd.getBytes());
             os.flush();
-            process.waitFor();
         } catch (Exception e) {
             e.printStackTrace();
         }
