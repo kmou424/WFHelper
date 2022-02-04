@@ -33,7 +33,6 @@ import moe.kmou424.WorldFlipper.Helper.Info.BossInfoWrapper;
 import moe.kmou424.WorldFlipper.Helper.Logger.Logger;
 import moe.kmou424.WorldFlipper.Helper.MainActivity;
 import moe.kmou424.WorldFlipper.Helper.R;
-import moe.kmou424.WorldFlipper.Helper.Tools.FileUtils;
 import moe.kmou424.WorldFlipper.Helper.Tools.BitmapUtils;
 import moe.kmou424.WorldFlipper.Helper.Tools.RootUtils;
 import moe.kmou424.WorldFlipper.Helper.Tools.ScreenUtils;
@@ -47,7 +46,6 @@ public class TrackerService extends Service {
     private Bitmap mBitmap;
     private Handler mHandler;
     private SharedPreferences mSharedPreferences;
-    private String mImageFilePath;
     private String mTopProcess;
     private TesseractOCR mTesseractOCRChi;
     private Thread mScreenShotThread;
@@ -56,7 +54,6 @@ public class TrackerService extends Service {
     private HashMap<String, BossInfo> mBossInfoMap;
     private boolean mHaveTargetTeam;
     private int mTargetTeamIdx;
-    private int mNextTeamIdx;
     private boolean isReLoginDelayEnabled;
     private int reLoginDelay;
     private int reLoginDelayCnt;
@@ -65,7 +62,6 @@ public class TrackerService extends Service {
 
     private boolean isEnteredRoom = false;
     private boolean isContinueClicked = false;
-    private boolean hasAsyncTask = false;
     private boolean stopScreenShotThread = false;
 
     @Nullable
@@ -337,16 +333,14 @@ public class TrackerService extends Service {
                 mHaveTargetTeam = false;
                 return true;
             } else {
-                hasAsyncTask = true;
                 // 如果目标队伍idx大于当前队伍idx，则往后翻，反之则往前
-                if (mTargetTeamIdx > cur) {
-                    mNextTeamIdx = cur + 1;
-                    swipeNext();
-                } else {
-                    mNextTeamIdx = cur - 1;
-                    swipeLast();
+                for (int i = 0; i < Math.abs(mTargetTeamIdx - cur); ++i) {
+                    if (mTargetTeamIdx > cur) {
+                        swipeNext();
+                    } else {
+                        swipeLast();
+                    }
                 }
-                hasAsyncTask = false;
                 return false;
             }
         }
@@ -378,14 +372,14 @@ public class TrackerService extends Service {
             @Override
             public void run() {
                 super.run();
-                while (!stopScreenShotThread && !hasAsyncTask) {
+                while (!stopScreenShotThread) {
                     // 获取前台进程包名
                     mTopProcess = RootUtils.getTopProcess();
                     // 若前台进程是WF才开始截图
                     if (mTopProcess.contains(WORLD_FLIPPER_PACKAGE_NAME_LT_SERVER)) {
-                        mImageFilePath = ScreenUtils.takeScreenShot();
-                        if (mImageFilePath != null) {
-                            mBitmap = BitmapUtils.read(mImageFilePath);
+                        mBitmap = ScreenUtils.takeScreenShotAsBitmap();
+                        if (mBitmap != null) {
+                            Log.d(LOG_TAG, "Test");
                             if (mNowTask == NO_TASK) mHandler.sendEmptyMessage(GO_CHECK_BITMAP);
                             else mHandler.sendEmptyMessage(mNowTask);
                         } else {
@@ -394,7 +388,6 @@ public class TrackerService extends Service {
                             MainActivity.mHandler.sendEmptyMessage(STOP_TRACKER_SERVICE);
                             return;
                         }
-                        FileUtils.deleteFile(mImageFilePath);
                     }
                     // 每次执行后休眠0.75秒
                     try {

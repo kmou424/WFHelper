@@ -13,7 +13,6 @@ import moe.kmou424.WorldFlipper.Helper.HandlerMsg.Action.ToastHandlerMsg;
 import moe.kmou424.WorldFlipper.Helper.HandlerMsg.HandlerMessage;
 import moe.kmou424.WorldFlipper.Helper.MainActivity;
 import moe.kmou424.WorldFlipper.Helper.R;
-import moe.kmou424.WorldFlipper.Helper.Tools.RootUtils;
 import moe.kmou424.WorldFlipper.Helper.Tools.ScreenUtils;
 import moe.kmou424.WorldFlipper.Helper.Widget.FloatingWindow;
 
