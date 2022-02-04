@@ -56,6 +56,7 @@ public class TrackerService extends Service {
     private HashMap<String, BossInfo> mBossInfoMap;
     private boolean mHaveTargetTeam;
     private int mTargetTeamIdx;
+    private int mNextTeamIdx;
     private boolean isReLoginDelayEnabled;
     private int reLoginDelay;
     private int reLoginDelayCnt;
@@ -64,6 +65,7 @@ public class TrackerService extends Service {
 
     private boolean isEnteredRoom = false;
     private boolean isContinueClicked = false;
+    private boolean hasAsyncTask = false;
     private boolean stopScreenShotThread = false;
 
     @Nullable
@@ -343,12 +345,19 @@ public class TrackerService extends Service {
                 mHaveTargetTeam = false;
                 return true;
             } else {
+                hasAsyncTask = true;
                 // 如果目标队伍idx大于当前队伍idx，则往后翻，反之则往前
                 if (mTargetTeamIdx > cur) {
+                    mNextTeamIdx = cur + 1;
                     swipeNext();
                 } else {
+                    mNextTeamIdx = cur - 1;
                     swipeLast();
                 }
+                do {
+                    cur = getCurTeamIdx();
+                } while (cur != mNextTeamIdx);
+                hasAsyncTask = false;
                 return false;
             }
         }
@@ -380,7 +389,11 @@ public class TrackerService extends Service {
             @Override
             public void run() {
                 super.run();
-                while (!stopScreenShotThread) {
+                if (hasAsyncTask) {
+                    if (DEBUG) Log.d(LOG_TAG, "ScreenShot is paused, because there is an async task is running");
+                    Logger.out(Logger.INFO, LOG_TAG, "ScreenShotThread", "ScreenShot is paused, because there is an async task is running");
+                }
+                while (!stopScreenShotThread && !hasAsyncTask) {
                     // 获取前台进程包名
                     mTopProcess = RootUtils.getTopProcess();
                     // 若前台进程是WF才开始截图
