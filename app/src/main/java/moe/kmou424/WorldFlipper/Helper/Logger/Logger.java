@@ -52,6 +52,9 @@ public class Logger {
     }
 
     public static void outWithSysStream(int mLoggerLevel, String mLogClass, String mLogMethod, String mLogText) {
+        if (mLogText == null) {
+            mLogText = "null";
+        }
         if (Global.DEBUG) {
             switch (mLoggerLevel) {
                 case DEBUG:
