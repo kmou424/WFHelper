@@ -36,6 +36,7 @@ import moe.kmou424.WorldFlipper.Helper.R;
 import moe.kmou424.WorldFlipper.Helper.Tools.FileUtils;
 import moe.kmou424.WorldFlipper.Helper.Tools.BitmapUtils;
 import moe.kmou424.WorldFlipper.Helper.Tools.RootUtils;
+import moe.kmou424.WorldFlipper.Helper.Tools.ScreenUtils;
 import moe.kmou424.WorldFlipper.Helper.Tools.SimulateTouch;
 import moe.kmou424.WorldFlipper.Helper.Tools.TesseractOCR;
 
@@ -388,7 +389,7 @@ public class TrackerService extends Service {
                     mTopProcess = RootUtils.getTopProcess();
                     // 若前台进程是WF才开始截图
                     if (mTopProcess.contains(WORLD_FLIPPER_PACKAGE_NAME_LT_SERVER)) {
-                        mImageFilePath = RootUtils.takeScreenShot();
+                        mImageFilePath = ScreenUtils.takeScreenShot();
                         if (mImageFilePath != null) {
                             mBitmap = BitmapUtils.read(mImageFilePath);
                             if (mNowTask == NO_TASK) mHandler.sendEmptyMessage(GO_CHECK_BITMAP);

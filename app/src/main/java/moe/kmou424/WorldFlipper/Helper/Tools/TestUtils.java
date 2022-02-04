@@ -17,7 +17,7 @@ public class TestUtils {
 
     public static void testOCRWithScreenShot(ImageView imageView, BitmapInfo bitmapInfo) {
         TesseractOCR mTesseractOCR = new TesseractOCR("chi_sim");
-        String file = RootUtils.takeScreenShot();
+        String file = ScreenUtils.takeScreenShot();
         Bitmap b = BitmapUtils.read(file);
         Bitmap bitmap = BitmapUtils.crop(b, bitmapInfo);
         imageView.setImageBitmap(bitmap);

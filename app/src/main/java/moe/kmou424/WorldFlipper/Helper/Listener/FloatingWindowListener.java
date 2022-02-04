@@ -14,6 +14,7 @@ import moe.kmou424.WorldFlipper.Helper.HandlerMsg.HandlerMessage;
 import moe.kmou424.WorldFlipper.Helper.MainActivity;
 import moe.kmou424.WorldFlipper.Helper.R;
 import moe.kmou424.WorldFlipper.Helper.Tools.RootUtils;
+import moe.kmou424.WorldFlipper.Helper.Tools.ScreenUtils;
 import moe.kmou424.WorldFlipper.Helper.Widget.FloatingWindow;
 
 public class FloatingWindowListener {
@@ -48,7 +49,7 @@ public class FloatingWindowListener {
     private void bindFloatingSubButton() {
         mFloatingWindow.mRootView.findViewById(R.id.floatingSubButton1)
                 .setOnClickListener(view -> mHandler.sendMessage(new HandlerMessage<>().make(
-                        new ToastHandlerMsg("Screenshot was save at " + RootUtils.takeScreenShot(), ToastHandlerMsg.LENGTH_LONG),
+                        new ToastHandlerMsg("Screenshot was save at " + ScreenUtils.takeScreenShot(), ToastHandlerMsg.LENGTH_LONG),
                         HandlerMessage.SHOW_TOAST)
                 ));
         mFloatingWindow.mRootView.findViewById(R.id.floatingSubButton2)
