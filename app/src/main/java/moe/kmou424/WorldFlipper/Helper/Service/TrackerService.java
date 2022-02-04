@@ -62,7 +62,7 @@ public class TrackerService extends Service {
 
     private boolean isEnteredRoom = false;
     private boolean isContinueClicked = false;
-    private boolean isWaitAsyncTask = false;
+    private boolean isSwitchTeam = false;
     private boolean stopScreenShotThread = false;
 
     @Nullable
@@ -332,11 +332,11 @@ public class TrackerService extends Service {
                 SimulateTouch.click(CoordinatePoints.PREPARE_EDIT_TEAM_OK);
                 // 恢复状态，以免下次循环又进来了
                 mHaveTargetTeam = false;
-                isWaitAsyncTask = false;
+                isSwitchTeam = false;
                 return true;
             } else {
                 // 如果目标队伍idx大于当前队伍idx，则往后翻，反之则往前
-                isWaitAsyncTask = true;
+                isSwitchTeam = true;
                 if (mTargetTeamIdx > cur) {
                     swipeNext();
                 } else {
@@ -373,7 +373,7 @@ public class TrackerService extends Service {
             @Override
             public void run() {
                 super.run();
-                if (isWaitAsyncTask) {
+                if (isSwitchTeam) {
                     try {
                         Thread.sleep(150);
                     } catch (InterruptedException e) {
