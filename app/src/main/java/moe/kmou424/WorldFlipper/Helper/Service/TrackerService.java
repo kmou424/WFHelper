@@ -186,7 +186,6 @@ public class TrackerService extends Service {
                 }
                 break;
             case GO_BELL:
-                if (checkIsHomePage()) break;
                 if (!mTesseractOCRChi.getTextFromBitmap(BitmapUtils.crop(mBitmap, CoordinatePoints.BELL_DIALOG_TITLE)).contains(CheckPoints.BELL_DIALOG_TITLE))
                     break;
                 if (checkBossEnabled(mTesseractOCRChi.getTextFromBitmap(BitmapUtils.crop(mBitmap, CoordinatePoints.BELL_DIALOG_BOSS_INFO)))) {
