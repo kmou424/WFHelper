@@ -260,18 +260,6 @@ public class TrackerService extends Service {
         return mTesseractOCRChi.getTextFromBitmap(BitmapUtils.crop(mBitmap, CoordinatePoints.LOADING_TEXT)).contains(CheckPoints.LOADING_TEXT);
     }
 
-    private boolean checkAsyncTask() {
-        if (hasAsyncTask) {
-            Logger.outWithSysStream(Logger.INFO, LOG_TAG, "ScreenShotThread", "We will take next screenshot without do anything, because there is an async task is running");
-            if (mNextTeamIdx == getCurTeamIdx()) {
-                hasAsyncTask = false;
-                return true;
-            }
-            return false;
-        }
-        return true;
-    }
-
     private boolean checkDialog() {
         if (DEBUG) Log.d(LOG_TAG, "checkDialog");
         return CheckPoints.DIALOG_BUTTON_COLOR.check(BitmapUtils.getPixelRgbInfo(mBitmap, CoordinatePoints.DIALOG_BUTTON));
@@ -358,6 +346,7 @@ public class TrackerService extends Service {
                     mNextTeamIdx = cur - 1;
                     swipeLast();
                 }
+                hasAsyncTask = false;
                 return false;
             }
         }
@@ -389,14 +378,13 @@ public class TrackerService extends Service {
             @Override
             public void run() {
                 super.run();
-                while (!stopScreenShotThread) {
+                while (!stopScreenShotThread && !hasAsyncTask) {
                     // 获取前台进程包名
                     mTopProcess = RootUtils.getTopProcess();
                     // 若前台进程是WF才开始截图
                     if (mTopProcess.contains(WORLD_FLIPPER_PACKAGE_NAME_LT_SERVER)) {
                         mImageFilePath = ScreenUtils.takeScreenShot();
                         if (mImageFilePath != null) {
-                            if (!checkAsyncTask()) continue;
                             mBitmap = BitmapUtils.read(mImageFilePath);
                             if (mNowTask == NO_TASK) mHandler.sendEmptyMessage(GO_CHECK_BITMAP);
                             else mHandler.sendEmptyMessage(mNowTask);
