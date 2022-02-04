@@ -66,10 +66,6 @@ public class TrackerService extends Service {
     private boolean isContinueClicked = false;
     private boolean stopScreenShotThread = false;
 
-
-    public TrackerService() {
-    }
-
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
