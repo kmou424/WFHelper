@@ -282,30 +282,19 @@ public class TrackerService extends Service {
 
     private boolean checkBossEnabled(String mBossStr) {
         if (mBossStr == null) return false;
-        // 去除OCR难以准确识别的字符
-        mBossStr = mBossStr.replaceAll("\\.", "");
-        mBossStr = mBossStr.replaceAll("·", "");
         // 遍历Map的所有key
         for (String mBossName : mBossInfoMap.keySet()) {
-            // 对于每个key去除OCR难以准确识别的字符
-            String mBossNameTemp = mBossName;
-            mBossNameTemp = mBossNameTemp.replaceAll("\\.", "");
-            mBossNameTemp = mBossNameTemp.replaceAll("·", "");
             // 判断是否为此boss
-            if (mBossStr.contains(mBossNameTemp)) {
+            if (checkNameSimilarity(mBossStr, mBossName, 3)) {
                 // 获取key对应的BossInfo对象
                 BossInfo mBossInfo = mBossInfoMap.get(mBossName);
                 // 空指针判断
                 if (mBossInfo != null) {
                     // 如果此Boss状态为未开启，直接返回false
                     if (!mBossInfo.isEnabled) return false;
-                    Log.d(LOG_TAG, mBossStr);
-                    // 去除掉字符串中的boss名字，只留下难度
-                    mBossStr = mBossStr.replace(mBossNameTemp, "");
-                    Log.d(LOG_TAG, mBossStr);
                     // 遍历判断此难度是否已勾选
                     for (String mLevel : mBossInfo.mLevels) {
-                        if (mLevel.equals(mBossStr)) {
+                        if (mBossStr.endsWith(mLevel)) {
                             mHaveTargetTeam = false;
                             if (!mBossInfo.mTeam.equals("null")) {
                                 for (int i = 0; i < AvailableTeam.length; ++i) {
@@ -325,6 +314,15 @@ public class TrackerService extends Service {
             }
         }
         return false;
+    }
+
+    private boolean checkNameSimilarity(String mName, String mTargetName, int mAccuracy) {
+        int cnt = 0;
+        for(int i = 0; i < mName.length(); i++){
+            String ch = String.valueOf(mName.charAt(i));
+            if (mTargetName.contains(ch)) cnt++;
+        }
+        return cnt >= mAccuracy;
     }
 
     private boolean switchTeam() {
